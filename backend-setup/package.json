@@ -1,7 +1,7 @@
 {
   "name": "user",
   "version": "1.0.0",
-  "main": "server.ts",
+  "main": "src/app/server.ts",
   "type": "module",
   "scripts": {
     "build": "tsc",
