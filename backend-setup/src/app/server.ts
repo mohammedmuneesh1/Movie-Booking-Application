@@ -29,6 +29,13 @@ app.use((req, res, next) => {
 // app.use('/api/users',UserRoutes);
 
 
+app.get("/",(req:Request, res:Response) => {
+  console.log('Api Working')
+});
+
+
+
+
 app.use((req:Request, res:Response) => {
   return res.status(404).json({
     success: false,
