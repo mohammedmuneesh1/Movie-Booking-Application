@@ -1,0 +1,25 @@
+import React from "react";
+import { Outlet } from "react-router-dom";
+import AdminNavBar from "../components/(admin)/AdminNavBar";
+import AdminSideBar from "../components/(admin)/AdminSideBar";
+
+
+ function AdminSideLayout() {
+  return (
+    <section>
+      <AdminNavBar/>
+      <div className="flex">
+      <AdminSideBar/>
+      <main
+       className="flex-1 px-4 py-10 md:px-10
+        h-[calc(100vh-64px)] overflow-y-auto"
+       >
+        <Outlet /> {/* 👈 renders child route content */}
+      </main>
+      </div>
+    </section>
+  );
+}
+
+
+export default AdminSideLayout;

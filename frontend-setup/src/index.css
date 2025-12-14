@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary:#F84565;
+  --color-primary-dull:#D63854;
+}
+
+/* *{
+  font-family: "Outfit", sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color:#787777 #1e1e1e;
+  margin:0px;
+  padding:0px;
+  box-sizing:border-box;
+} */
+
+
+
+@layer base {
+  body{
+    background-color: black;
+    font-family: "Outfit", sans-serif;
+    padding:0px;
+    margin:0px;
+    box-sizing:border-box;
+    scrollbar-width: thin;
+    scrollbar-color: #787777 #1e1e1e;
+  }
+}
+@layer components{
+
+  .commonLayoutSpacing{
+    @apply px-6 md:px-16 lg:px-24 xl:px-44
+  }
+  .commonTopBottomPadding{
+    @apply py-30 md:pt-50
+  }
+  .commonGapBetwnComponents{
+    @apply mt-14 sm:mt-16 md:mt-20
+  }
+
+  .btnCommonDesign{
+    @apply text-sm bg-primary px-10 py-3 
+    hover:bg-primary-dull
+    transition rounded-md
+     font-medium cursor-pointer
+  }
+}
+
+.cl-userButtonBadge,
+.clerk-dev-badge {
+  display: none !important;
+}
+
+.clerk-dev-badge {
+  display: none !important;
+}
+
+.herosectionBackgroundImage {
+  background-image: url('/frontend-setup/public/backgroundImage.png');
+}
+
+
+
+.no-scrollbar{
+  scrollbar-width:none
+}
+
+
+
+
+/*----------------------------------------------- INPUT DATE TIME PICKER EDIT START -------------------------------------------------------------*/
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance:none;
+}
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+
+
+/*----------------------------------------------- INPUT DATE TIME PICKER EDIT END -------------------------------------------------------------*/
