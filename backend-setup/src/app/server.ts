@@ -31,6 +31,10 @@ app.use((req, res, next) => {
 
 app.get("/",(req:Request, res:Response) => {
   console.log('Api Working')
+  return res.status(200).json({
+    success: true,
+    message: "API is working",
+  });
 });
 
 
