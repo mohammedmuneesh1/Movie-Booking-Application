@@ -5,7 +5,6 @@ import express, { type Request, type Response } from 'express'
 import type { JwtPayload } from 'jsonwebtoken';
 import cors from 'cors';
 import connectDB from '../config/db.js';
-import { clerkMiddleware } from '@clerk/express';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -17,7 +16,6 @@ if(!PORT) {
 
 app.use(cors());
 app.use(express.json());
-app.use(clerkMiddleware());
 
 
 
