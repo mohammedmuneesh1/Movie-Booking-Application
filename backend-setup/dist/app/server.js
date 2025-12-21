@@ -1,6 +1,15 @@
 import express, {} from 'express';
+// import connectDB from './utils/db.js';
+// import { router as UserRoutes } from './routes/user.route.js';
 import cors from 'cors';
 import connectDB from '../config/db.js';
+import dotenv from 'dotenv';
+import showRouter from './show/route/show.route.js';
+import UserRouter from './user/routes/user.route.js';
+import BookingRouter from './booking/routes/booking.route.js';
+import AdminRouter from './admin/routes/admin.route.js';
+import FavourtieRouter from './favourite/route/favourite.route.js';
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 if (!PORT) {
@@ -12,7 +21,11 @@ app.use((req, res, next) => {
     console.log(`[${req.method}] ${req.originalUrl},`);
     next();
 });
-// app.use('/api/users',UserRoutes);
+app.use('/api/users', UserRouter);
+app.use('/api/show', showRouter);
+app.use('/api/bookings', BookingRouter);
+app.use('/api/admin', AdminRouter);
+app.use('/api/favourites', FavourtieRouter);
 app.get("/", (req, res) => {
     console.log('Api Working');
     return res.status(200).json({

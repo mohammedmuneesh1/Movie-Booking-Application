@@ -15,9 +15,9 @@ const userSchema = new mongoose.Schema({
         },
     },
     image: {
-        type: mongoose.Schema.ObjectId,
-        ref: "media",
-    }
+        type: mongoose.Schema.Types.Mixed, // Accepts any type
+        ref: "Media", // Capital M for consistency
+    },
 }, {
     timestamps: true,
 });

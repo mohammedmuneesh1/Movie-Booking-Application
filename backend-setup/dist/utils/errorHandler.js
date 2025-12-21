@@ -1,0 +1,7 @@
+import ResponseHandler from "./responseHandler.js";
+const ErrorHandler = (res, error, fnName, errorCode) => {
+    console.error("GLOBAL ERROR:", error instanceof Error ? error?.message : `An  error occurred at ${fnName} Function. Error:${error}`);
+    return error instanceof Error ? ResponseHandler(res, errorCode || 500, false, null, error.message) : ResponseHandler(res, errorCode || 500, false, null, `Technical Error: Error:${error}`);
+};
+export default ErrorHandler;
+//# sourceMappingURL=errorHandler.js.map
