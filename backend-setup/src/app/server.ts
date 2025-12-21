@@ -2,16 +2,23 @@
 import express, { type Request, type Response } from 'express'
 // import connectDB from './utils/db.js';
 // import { router as UserRoutes } from './routes/user.route.js';
-import type { JwtPayload } from 'jsonwebtoken';
 import cors from 'cors';
 import connectDB from '../config/db.js';
+import dotenv from 'dotenv';
+import showRouter from './show/route/show.route.js';
+import UserRouter from './user/routes/user.route.js';
+import BookingRouter from './booking/routes/booking.route.js';
+import AdminRouter from './admin/routes/admin.route.js';
+import FavourtieRouter from './favourite/route/favourite.route.js';
+
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
 if(!PORT) {
     throw new Error('PORT is not defined');
 }
-
 
 
 app.use(cors());
@@ -24,7 +31,14 @@ app.use((req, res, next) => {
   
   next();
 });
-// app.use('/api/users',UserRoutes);
+
+
+app.use('/api/users',UserRouter);
+app.use('/api/show',showRouter);
+app.use('/api/bookings',BookingRouter);
+app.use('/api/admin',AdminRouter);
+app.use('/api/favourites',FavourtieRouter);
+
 
 
 app.get("/",(req:Request, res:Response) => {
