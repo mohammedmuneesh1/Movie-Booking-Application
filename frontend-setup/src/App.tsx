@@ -14,6 +14,9 @@ import AdminAddShowsPage from './pages/(admin)/AdminAddShowsPage'
 import AdminListBookingsPage from './pages/(admin)/AdminListBookingsPage'
 import AdminDashboardPage from './pages/(admin)/AdminDashboardPage'
 import AdminListShowsPage from './pages/(admin)/AdminListShowsPage'
+import AdminMiddleware from './middleware/AdminMiddleware'
+import AdminLoginPage from './components/(admin)/AdminLogin'
+import NotFoundPage from './components/NotFoundPage'
 
 
 
@@ -34,6 +37,7 @@ function App() {
         <Route path="/movies/:id/:date" element={<SeatLayoutPage />} />
         <Route path="/my-bookings" element={<MyBookingsPage />} />
         <Route path="/favourites" element={<FavouritePage />} />
+        <Route path="/login" element={<AdminLoginPage/>} />
       </Route>
 
 
@@ -41,16 +45,21 @@ function App() {
 
       {/*ADMIN ROUTE START */}
       
-
-  <Route path="/admin" element={<AdminSideLayout />}>
-
-  <Route index element={<AdminDashboardPage />} /> 
-  <Route path="list-shows" element={<AdminListShowsPage />} />
-  <Route path="add-shows" element={<AdminAddShowsPage />} />
-  <Route path="list-bookings" element={<AdminListBookingsPage />} />
-  
+<Route path="/admin" element={<AdminMiddleware />}>
+  <Route element={<AdminSideLayout />}>
+    <Route index element={<AdminDashboardPage />} />
+    <Route path="list-shows" element={<AdminListShowsPage />} />
+    <Route path="add-shows" element={<AdminAddShowsPage />} />
+    <Route path="list-bookings" element={<AdminListBookingsPage />} />
+  </Route>
 </Route>
 
+<Route path="/user/dashboard" element={<AdminMiddleware />}>
+  <Route element={<AdminSideLayout />}>
+  </Route>
+</Route>
+
+<Route path="*" element={<NotFoundPage />} />
 {/* ✔️ This allows URLs like:
 /admin → loads default layout content
 /admin/dashboard

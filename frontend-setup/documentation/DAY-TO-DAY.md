@@ -28,3 +28,58 @@ Use it when:
 
 
 //---------------------------------------------- 08-12-2025 END ---------------------------------------------- 
+
+//---------------------------------------------- 27-12-2025 START ---------------------------------------------- 
+
+1) npm install @react-oauth/google
+
+2) 2️⃣ Wrap app with provider
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
+<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+  <App />
+</GoogleOAuthProvider>
+
+
+
+3) 3️⃣ Use useGoogleLogin (THIS is what you want)
+
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "@/lib/axios";
+
+const googleLogin = useGoogleLogin({
+  flow: "auth-code", // IMPORTANT
+  onSuccess: async (response) => {
+    // response.code ← THIS is what you send to backend
+    await axios.post("/auth/google", {
+      code: response.code,
+    });
+  },
+  onError: () => {
+    console.log("Google login failed");
+  },
+});
+
+<button
+  type="button"
+  onClick={() => googleLogin()}
+  className="w-full border-4 border-black px-6 py-3 text-xl font-black"
+>
+  Google Login
+</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//---------------------------------------------- 27-12-2025 END ---------------------------------------------- 

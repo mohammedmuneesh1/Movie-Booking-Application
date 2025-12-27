@@ -1,14 +1,21 @@
 import  { useCallback, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {assets} from '../assets/assets';
-import { MenuIcon, SearchIcon, XIcon } from 'lucide-react';
-import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
+import { MenuIcon, SearchIcon, User, XIcon } from 'lucide-react';
+import { useAppContext } from '../context/useAppContext';
+//eslint-disable-next-line
+// import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
 
 const  Navbar = () => {
   
   const [isOpen,setIsOpen] = useState<boolean>(false);
-  const {user} = useUser();
-  const {openSignIn} = useClerk();
+  const {userInfo} = useAppContext();
+  //eslint-disable-next-line
+  // const {user} = useUser();
+  //eslint-disable-next-line
+  // const {openSignIn} = useClerk();
+
+  const navigate = useNavigate();
 
 
 
@@ -110,18 +117,29 @@ max-md:text-lg z-50 flex flex-col md:flex-row
   className='max-md:hidden w-6 h-6 cursor-pointer text-white'
   />
   {
-    !user ? (
+    !userInfo ? (
       <button
-      onClick={() => openSignIn()}
+      onClick={() => navigate("/login")}
+      // onClick={() => openSignIn()}
       className='px-4 py-1 sm:px-7 sm:py-2 bg-primary
-      hover:bg-primary-dull transition-all 
-      rounded-full font-medium cursor-pointer
+      hover:bg-primary-dull transition-all  text-sm
+      rounded-full font-medium cursor-pointer text-white
       '>
       Login
       </button>
 
     ):(
-      <UserButton/>
+
+      
+        <button
+      onClick={() => userInfo?.ia  ?  navigate('/admin') : navigate("/user/bookings")}
+      className='px-4 py-1 sm:px-7 sm:py-2 bg-primary
+      hover:bg-primary-dull transition-all  text-sm
+      rounded-full font-medium cursor-pointer text-white
+       flex items-center gap-2'>
+        <User />
+      </button>
+      // <UserButton/>
     )
   }
   {/* <button

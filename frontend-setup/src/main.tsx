@@ -3,10 +3,10 @@ import './index.css'
 import App from './App.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { ToastProvider } from './lib/ToastProvider.tsx'
-  import { ClerkProvider } from '@clerk/clerk-react'
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import AppContextProvider from './context/AppContextProvider.tsx'
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-
+const PUBLISHABLE_KEY = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
 
 if (!PUBLISHABLE_KEY) {
@@ -18,16 +18,14 @@ if (!PUBLISHABLE_KEY) {
 
 
 createRoot(document.getElementById('root')!).render (
-  
-  <ClerkProvider
-  publishableKey={PUBLISHABLE_KEY}
-
-  >
+<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
   <BrowserRouter>
+  <AppContextProvider>
   <ToastProvider/>
     <App />
+  </AppContextProvider>
   </BrowserRouter>
-  </ClerkProvider>  
+ </GoogleOAuthProvider>
 )
 
 

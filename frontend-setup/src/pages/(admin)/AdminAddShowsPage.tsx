@@ -1,25 +1,52 @@
 import { useEffect, useState } from "react";
 import AdminTitle from "../../components/(admin)/AdminTitle";
-import { dummyShowsData } from "../../assets/assets";
+// import { dummyShowsData } from "../../assets/assets";
 import Loading from "../../components/Loading";
 import { CheckIcon, DeleteIcon, StarIcon } from "lucide-react";
 import { kConverter } from "../../lib/kConverter";
+import axiosInstance from "../../configs/axios";
+import toast from "react-hot-toast";
+import type { AddShowTypeInterface } from "../../types/movieApiType";
+import { useAppContext } from "../../context/useAppContext";
 
 
 
 const AdminAddShowsPage = ()=>{
     const currency  = import.meta.env.VITE_CURRENCY
-    const [nowPlayingMovies,setNowPlayingMovies] = useState([]);
+    const {tmdbImageUrl} = useAppContext();
+    const [nowPlayingMovies,setNowPlayingMovies] = useState<AddShowTypeInterface[]>([]);
     const [selectedMovie,setSelectedMovie] = useState<string | null>(null);
     //eslint-disable-next-line
     const [dateTimeSelection, setDateTimeSelection] = useState<Record<string, any>>({});
     const [dateTimeInput,setDateTimeInput] = useState('');
     const [showPrice,setShowPrice] = useState("");
+    const [isLoading,setIsLoading] = useState<boolean>(true);
+    const [addingShow,setAddingShow] = useState<boolean>(false);
+
+
 
 
     const fetchNowPlayingMovies = async ()=>{
         //eslint-disable-next-line
-        setNowPlayingMovies(dummyShowsData as any);
+        // setNowPlayingMovies(dummyShowsData as any);
+
+        try {
+            const res = await axiosInstance.get("/api/show/now-playing");
+            setIsLoading(false);
+            console.log('res',res?.data?.data?.movies);
+            if(res?.data?.success === true) {
+                setNowPlayingMovies(res?.data?.data?.movies ?? []);
+            }
+            else{
+                toast.error(res?.data?.response ?? "Technical Issue in fetching shows. Please try again later.");
+                return;
+            }
+        }
+         catch (error) {
+            console.error("error FS",error instanceof Error ? error.message : error);
+            toast.error("Technical Issue in fetching shows. Please try again later.");
+            return;
+        }
     }
 
     useEffect(()=>{
@@ -29,7 +56,7 @@ const AdminAddShowsPage = ()=>{
 
 
 
-    if(nowPlayingMovies.length === 0){
+    if(isLoading){                    
         return(
             <Loading/>
         )
@@ -86,11 +113,66 @@ return {
             }
         })
     }
+console.log('dateTimeSelection',dateTimeSelection);
 
 
+ 
+
+const handleSubmit = async ()=>{
+    try {
+        setAddingShow(true);
+        if(!selectedMovie  ){
+            toast.error("Please select movie ");
+            setAddingShow(false);
+            return;
+        }
+        if( Object.keys(dateTimeSelection)?.length === 0){
+            toast.error("Please select movie-date and time");
+            setAddingShow(false);
+            return;
+        }
+        if(!showPrice){
+            toast.error("Please enter the price for the show.");
+            setAddingShow(false);
+            return;
+        }
+
+        const showsInput = Object.entries(dateTimeSelection).map(([date, time]) => ( 
+            {
+            date,
+            time,
+        }    
+//         {
+//             "date":"2025-06-06",
+// //             "time":["20:00"]
+//         }
+    ));
 
 
+    const payload = {
+        movieId:selectedMovie,
+        showsInput:showsInput,
+        showPrice:Number(showPrice)
+    }
 
+    const res = await axiosInstance.post('/api/show/add-show',payload);
+    console.log('res',res);
+
+    setAddingShow(false);
+
+    if(res?.data?.success === true) {
+        toast.success(res?.data?.response ?? "Show added successfully.");
+        setShowPrice('');
+        setDateTimeSelection({});
+        setSelectedMovie(null);
+    } 
+    else{
+        toast.error(res?.data?.response ?? "Technical Issue in adding show. Please try again later.");
+    }
+    } catch (error) {
+        console.error("error FS",error instanceof Error ? error.message : error);
+    }
+}
 
     return(
         <div className=" max-w-full w-full overflow-hidden text-white">
@@ -107,7 +189,9 @@ return {
 
 
     {/*ADDED MOVIE  GRID START HERE  */}
-                    <div
+  {
+        nowPlayingMovies?.length > 0 ?(
+               <div
              className="relative w-full max-w-full 
               grid 
               xl:grid-cols-6
@@ -129,7 +213,7 @@ return {
                             <div className={`relative rounded-lg overflow-hidden`}>
 
                             <img
-                            src={movie.poster_path}
+                            src={`${tmdbImageUrl}/${movie.poster_path}`}
                             alt={movie.title}
                             className="w-full max-w-full brightness-90 "
                             />
@@ -159,6 +243,15 @@ return {
                     ))
                 }
                 </div>
+        ):(
+            <div className="text-sm text-gray-400 mt-4">
+                No Movies Found
+            </div>
+        )
+    }
+
+  
+                 
 
 {/*ADDED MOVIE  GRID END HERE  */}
 
@@ -280,10 +373,23 @@ className="bg-primary/80 text-white px-3 py-2 text-sm rounded-lg hover:bg-primar
 
           {/*ADD SHOW START */}
           <button 
+          onClick={handleSubmit}
+          disabled={addingShow}
+        //   onClick={()=>setAddingShow(true)}
           className="bg-primary text-white px-8 py-2 mt-6 rounded text-sm
           hover:bg-primary/90 transition-all cursor-pointer"
           >
-            Add Show
+            {
+                addingShow ? (
+                    <>
+                    Adding Show...
+                    </>
+                ):(
+                    <>
+                    Add Show
+                    </>
+                )
+            }
           </button>
           {/*ADD SHOW END */}
 

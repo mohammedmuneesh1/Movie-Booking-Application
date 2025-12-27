@@ -4,6 +4,8 @@
 @theme {
   --color-primary:#F84565;
   --color-primary-dull:#D63854;
+   --breakpoint-3xl: 1920px;
+
 }
 
 /* *{

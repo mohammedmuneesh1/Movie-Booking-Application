@@ -9,32 +9,44 @@ interface ActiveMovieCard{
     data:{
         showDateTime:string;
         showPrice:number;
-         movie:{
+         movieRef:{
             poster_path:string
              title:string;
              vote_average:number;
          },
     }
+    customSyle?:string;
+    imgStyle?:string;
+    tmdbImageUrl?:string;
 }
 
-const ActiveMovieCard:React.FC<ActiveMovieCard> = ({data}) => {
+const ActiveMovieCard:React.FC<ActiveMovieCard> = ({data,customSyle,imgStyle,tmdbImageUrl}) => {
+
+  console.log('data.movieRef.vote_average',data?.movieRef?.vote_average);
+  
+
 
     const currency = import.meta.env.VITE_CURRENCY;
+    console.log('${tmdbImageUrl}${data?.movie?.poster_path}',`${tmdbImageUrl}${data?.movieRef?.poster_path}`);
+
   return (
-     <div className="w-[260px] h-full rounded-xl
-      overflow-hidden bg-primary/10 shadow-md p-3 hover:-translate-y-5  transition-all duration-300 ease-in-out">
+     <div className={`${customSyle} w-[260px] h-full rounded-xl
+      overflow-hidden bg-primary/10 
+      shadow-md p-3 hover:-translate-y-5  transition-all duration-300 ease-in-out`}
+      
+      >
       {/* Image */}
-      <div className="w-full h-40 rounded-lg overflow-hidden">
+      <div className={`w-full ${imgStyle} h-40 rounded-lg overflow-hidden`}>
         <img
-          src={data?.movie?.poster_path}
-          alt={data?.movie?.title}
+          src={tmdbImageUrl ? `${tmdbImageUrl}${data?.movieRef?.poster_path}` : data?.movieRef?.poster_path}
+          alt={data?.movieRef?.title}
           className="w-full h-full object-cover "
         />
       </div>
 
       {/* Title */}
       <h3 className="mt-3 text-white font-semibold text-sm leading-tight">
-        {data?.movie?.title}
+        {data?.movieRef?.title}
       </h3>
 
       {/* Price + Rating */}
@@ -43,7 +55,15 @@ const ActiveMovieCard:React.FC<ActiveMovieCard> = ({data}) => {
 
         <div className="flex items-center gap-1 text-pink-400">
           <Star className="w-4 h-4 fill-pink-500 stroke-pink-500" />
-          <span className="text-sm text-pink-300">{data?.movie?.vote_average.toFixed(1)}</span>
+          {
+            data?.movieRef?.vote_average && (
+              <span className="text-sm text-pink-300">
+                {/* {data?.movieRef?.vote_average.toFixed(1)} */}
+                {Number(data.movieRef.vote_average).toFixed(1)}
+                </span>
+            )
+          }
+
         </div>
    
       </div>
