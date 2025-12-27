@@ -79,8 +79,9 @@ return ResponseHandler(res,200,true,{
 export async function ADD_NEW_MOVIE_SHOW_CONTROLLER (req:AuthenticatedRequest, res:Response) {
 
     const {movieId,showsInput,showPrice} = req.body;
+    console.log('request reached here',showsInput);
+
     let isMovieExist = await MovieModel.findOne({movieId});
-console.log('isMovieExist', isMovieExist);
 
     if(!isMovieExist){
         console.log('inside it ')
@@ -192,7 +193,7 @@ if(showsToCreate.length > 0){
 }
         
 
- return ResponseHandler(res,200,true,null,'Movie added successfully.');
+ return ResponseHandler(res,200,true,null,'Movie show added successfully.');
 }
 
 //===============================================================================================================================================
@@ -214,12 +215,44 @@ export async function GET_ALL_SHOWS_CONTROLLER (req:AuthenticatedRequest, res:Re
     }).populate('movieRef').sort({showDateTime:1});
 
     if(!shows?.length){
-        return ResponseHandler(res,200,true,null,'Shows not found.');
+        return ResponseHandler(res,200,false,null,'Shows not found.');
     }
     //filter unique shows 
+//     const seenMovieIds = new Set<string>();
+
+//      const uniqueShows = shows.filter(show => {
+//     const movieId = show.movieRef._id.toString();
+//     if (seenMovieIds.has(movieId)) {
+//       return false;
+//     }
+//     seenMovieIds.add(movieId);
+//     return true;
+//    });
+
+
+    // return ResponseHandler(res,200,true,{
+    //     shows:uniqueShows
+    // },'Shows fetched successfully.');
+
+    return ResponseHandler(res,200,true,{
+        shows:shows,
+    },'Shows fetched successfully.');
+}
+
+export async function GET_UNIQUE_SHOWS_CONTROLLER (req:AuthenticatedRequest, res:Response) {
+
+    const shows = await ShowModel.find({
+        showDateTime:{$gte:new Date()}
+    }).populate('movieRef').sort({showDateTime:1});
+
+    if(!shows?.length){
+        return ResponseHandler(res,200,false,null,'Shows not found.');
+    }
+    //filter unique shows 
+
     const seenMovieIds = new Set<string>();
 
-     const uniqueShows = shows.filter(show => {
+    const uniqueShows = shows.filter(show => {
     const movieId = show.movieRef._id.toString();
     if (seenMovieIds.has(movieId)) {
       return false;
@@ -227,9 +260,11 @@ export async function GET_ALL_SHOWS_CONTROLLER (req:AuthenticatedRequest, res:Re
     seenMovieIds.add(movieId);
     return true;
    });
-    return ResponseHandler(res,200,true,{
-        shows:uniqueShows
-    },'Shows fetched successfully.');
+
+    return ResponseHandler(res,200,true,uniqueShows,'Shows fetched successfully.');
+
+
+
 }
 
 

@@ -16,7 +16,7 @@ const favoriteSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 // 🔒 Prevent duplicates
-favoriteSchema.index({ user: 1, movie: 1 }, { unique: true });
+favoriteSchema.index({ user: 1, movieRef: 1 }, { unique: true });
 const FavoriteModel = mongoose.models.Favorite ||
     mongoose.model("Favorite", favoriteSchema);
 export default FavoriteModel;

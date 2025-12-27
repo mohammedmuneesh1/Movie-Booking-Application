@@ -21,6 +21,7 @@ export declare function ADD_NEW_MOVIE_SHOW_CONTROLLER(req: AuthenticatedRequest,
  * @returns  shows of unique  ⚠️
  */
 export declare function GET_ALL_SHOWS_CONTROLLER(req: AuthenticatedRequest, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function GET_UNIQUE_SHOWS_CONTROLLER(req: AuthenticatedRequest, res: Response): Promise<Response<any, Record<string, any>>>;
 /**
  * @desc    get a single show from the database
  * @route   GET /api/shows/add-show ⚠️

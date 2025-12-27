@@ -3,6 +3,8 @@ import ResponseHandler from "../../../utils/responseHandler.js";
 import { GET_ALL_BOOKINGS_SERVICE, GET_BOOKINGS_DATA_SERVICE } from "../../booking/services/booking.service.js";
 import { GET_ALL_SHOWS_SERVICE } from "../../show/services/show.service.js";
 import { GET_USER_COUNT_SERVICE } from "../../user/services/user.service.js";
+import FavoriteModel from "../../favourite/models/favourite.schema.js";
+import { TOP_10_FAVOURITE_MOVIES_SERVICE } from "../../favourite/services/favourite.service.js";
 // /**
 //  * @desc    put udpate user profile picture
 //  * @route   PUT /api/profile/pic
@@ -14,16 +16,19 @@ export async function IS_ADMIN(req, res) {
 }
 //=============================================  AN API TO CHECK IF HE IS ADMIN OR NOT END ============================================== 
 export async function GET_DASHBOARD__DATA_CONTROLLER(req, res) {
-    const [bookingData, activeShowData, userCount] = await Promise.all([
+    const [bookingData, activeShowData, userCount, top10Favourite] = await Promise.all([
         GET_BOOKINGS_DATA_SERVICE(),
         GET_ALL_SHOWS_SERVICE(),
         GET_USER_COUNT_SERVICE(),
+        TOP_10_FAVOURITE_MOVIES_SERVICE(),
     ]);
+    //👉 Most favorited movies across all users
     const dashboardData = {
-        bookingData: bookingData.length,
-        activeShowData: activeShowData.length,
+        totalBookings: bookingData.length,
+        activeShows: activeShowData,
         totalRevenue: bookingData.reduce((total, booking) => total + booking.amount, 0),
-        userCount: userCount
+        userCount: userCount,
+        userFavouriteMovies: top10Favourite,
     };
     return ResponseHandler(res, 200, true, dashboardData, 'Dashboard data fetched successfully');
 }

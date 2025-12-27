@@ -7,6 +7,7 @@ import type { AuthenticatedRequest } from "../../../middlewares/isAuth.js";
 import ResponseHandler from "../../../utils/responseHandler.js";
 import ShowModel from "../../show/models/show.schema.js";
 import BookingModel from "../models/booking.schema.js";
+import { GET_ALL_BOOKINGS_SERVICE } from "../services/booking.service.js";
 
 const checkSeatsAvailability = async (showId:string,selectedSeats:string[])=>{
     try {
@@ -51,7 +52,7 @@ export async function CREATE_BOOKING_CONTROLLER(req:AuthenticatedRequest,res:Res
    //1)  check if the seat is available for the selected show
 
    if(!selectedSeats.length ){
-    
+    return ResponseHandler(res,200,false,null,'Please select at least one seat.'); 
    }
    const isAvailable = await checkSeatsAvailability(showId,selectedSeats);
    if(!isAvailable){
@@ -126,4 +127,11 @@ export async function GET_ALL_OCCUPIED_SEATS_BY_SHOWID(req:AuthenticatedRequest,
     const occupiedSeats = Object.keys(showData?.occupiedSeats); 
     return ResponseHandler(res,200,true,occupiedSeats,'Occupied seats fetched successfully.');
 
+}
+
+
+
+export async function GET_ALL_BOOKINGS_CONTROLLER_B1(req:AuthenticatedRequest, res:Response){
+  const bookingData = await GET_ALL_BOOKINGS_SERVICE();
+  return ResponseHandler(res,200,true,bookingData,'Bookings fetched successfully.');
 }

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import type { AuthenticatedRequest } from "../../../middlewares/isAuth.js";
-export declare const USER_LOGIN_FN: (req: Request, res: Response) => Promise<Response<any, Record<string, any>>>;
+export declare const USER_LOGIN_FN: (req: Request, rs: Response) => Promise<Response<any, Record<string, any>>>;
 /**
  * @desc    Get MY PROFILE BY ID
  * @route   GET /api/users/profile/:id
@@ -41,5 +41,5 @@ export declare function GET_USER_ALL_BOOKINGS_CONTROLLER(req: AuthenticatedReque
  * @route   PUT /api/users/bookings
  * @access  Private
  * @returns  ALL BOOKINGS
- */ 
+ */
 //# sourceMappingURL=user.controller.d.ts.map
