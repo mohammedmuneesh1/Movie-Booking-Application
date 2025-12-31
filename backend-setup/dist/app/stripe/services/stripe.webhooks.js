@@ -2,7 +2,13 @@ import stripe from 'stripe';
 import ResponseHandler from '../../../utils/responseHandler.js';
 import BookingModel from '../../booking/models/booking.schema.js';
 import PaymentModel from '../models/payment.schema.js';
+import mongoose from 'mongoose';
+import connectDB from '../../../config/db.js';
 export const stripeWebHooks = async (request, response) => {
+    // ✅ SAFETY NET FOR WEBHOOK (required)
+    if (mongoose.connection.readyState !== 1) {
+        await connectDB();
+    }
     const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY); //1
     const sig = request.headers['stripe-signature'];
     let event;
