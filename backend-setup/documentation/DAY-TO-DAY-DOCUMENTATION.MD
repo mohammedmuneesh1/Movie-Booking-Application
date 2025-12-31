@@ -275,6 +275,54 @@ iii)
 
 
 
+webhooks stripe 
+
+in payment intent : https://movie-booking-application.vercel.app/
+
+
+https://dashboard.stripe.com/acct_1SkJ3aChVooBhQhu/test/workbench/webhooks/create
+
+
+in payment_intent -> payment_intent.succeeded -> continue buton --> then we can see webhook endpoint -> endpoint URL : 
+ (add vercel/ec2) url there 
+
+ https://movieBookingUrl.app/api/stripe
+
+
+
+
+then we will get 
+
+Signing secret
+Use this secret to verify that events come from Stripe. You can always view or roll this secret from the destination details page.
+
+
+
+
+a) app.use('/api/stripe',express.raw({type:'application/json'}),stripeWebHooks);
+
+
+
+“If the request’s Content-Type is application/json, give me the body as a Buffer, exactly as it arrived.”
+
+
+express.raw() means “don’t touch the request body”.
+No parsing. No JSON conversion. No cleverness. Just raw bytes.
+
+
+
+Why Stripe DEMANDS raw body (important)
+
+Stripe webhook verification works like this:
+
+Stripe sends:
+Raw payload (bytes)
+stripe-signature header
+
+
+Stripe SDK:
+Recomputes a hash using the raw bytes
+Compares it with the signature
 
 
 

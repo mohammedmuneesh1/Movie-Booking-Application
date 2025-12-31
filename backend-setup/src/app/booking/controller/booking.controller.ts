@@ -95,7 +95,7 @@ export async function CREATE_BOOKING_CONTROLLER(req:AuthenticatedRequest,res:Res
             currency:'usd',
             product_data:{
                  name:`${showData?.movieRef?.title} Movie`,
-                 description:showData?.movieRef?.description,
+                 description:showData?.movieRef?.description ?? "",
             },
             unit_amount:booking?.amount * 100,
         },

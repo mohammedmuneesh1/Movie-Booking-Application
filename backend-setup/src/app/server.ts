@@ -10,6 +10,7 @@ import UserRouter from './user/routes/user.route.js';
 import BookingRouter from './booking/routes/booking.route.js';
 import AdminRouter from './admin/routes/admin.route.js';
 import FavourtieRouter from './favourite/route/favourite.route.js';
+import { stripeWebHooks } from './stripe/services/stripe.webhooks.js';
 
 
 dotenv.config();
@@ -22,7 +23,40 @@ if(!PORT) {
 
 
 app.use(cors());
+
+//stripe webhooks route 
+// ✅ Stripe webhook MUST come before express.json
+app.use('/api/stripe',express.raw({type:'application/json'}),stripeWebHooks);
+//express.raw “DO NOT open the envelope. Give me the body exactly as it arrived.”
+//incomgin request body {"name":"John","age":30}
+// what express.raw()  req.body = <Buffer 7b 22 6e 61 6d 65 22 ... > req.body = <Buffer 7b 22 6e 61 6d 65 22 ... > 
+// That buffer is the exact bytes sent by the client.
+
+
+
+
+
+
+
+
+
+// ✅ Now safe to parse JSON for everything else
 app.use(express.json());
+//“If the body looks like JSON, open the envelope, read it, and convert it into a JavaScript object.”
+//Incoming request body (raw) {"name":"John","age":30}
+
+
+// After express.json()
+// req.body = {
+//   name: "John",
+//   age: 30
+// };
+
+//So yes — it converts JSON text into a JS object.
+
+
+
+
 
 
 
@@ -38,8 +72,6 @@ app.use('/api/show',showRouter);
 app.use('/api/bookings',BookingRouter);
 app.use('/api/admin',AdminRouter);
 app.use('/api/favourites',FavourtieRouter);
-
-
 
 app.get("/",(req:Request, res:Response) => {
   console.log('Api Working')
