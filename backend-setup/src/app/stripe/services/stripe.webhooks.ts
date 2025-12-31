@@ -33,7 +33,6 @@ export const stripeWebHooks = async (request:Request,response:Response)=>{
    
             case "payment_intent.succeeded":{
 
-                console.log('request inside it payment_intent.succeeded ')
                 const paymentIntent = event.data.object as stripe.PaymentIntent;
 
                 const sessionList = await stripeInstance.checkout.sessions.list({ // 1 USE stripInstance check the bottom output
@@ -49,7 +48,6 @@ export const stripeWebHooks = async (request:Request,response:Response)=>{
                 const {bookingId,paymentCustomUniqueId } = session?.metadata as {bookingId:string,paymentCustomUniqueId:string};
                 if(!bookingId || !paymentCustomUniqueId) return ResponseHandler(response,200,false,null,'stripe webhook error:Booking id not found.');
 
-               console.log('bookingId',bookingId,"paymentCustomUniqueId",paymentCustomUniqueId);
 
                 const payment = await PaymentModel.findOneAndUpdate(
                     {
@@ -58,12 +56,12 @@ export const stripeWebHooks = async (request:Request,response:Response)=>{
                 },
                 { 
                     status: "succeeded",
+                    isPaid: true,
                       paymentIntentId:session?.payment_intent as string, 
                 },{
                     new:true,
                 }
                 );
-                console.log('payment',payment);
 
                 break;
             }
