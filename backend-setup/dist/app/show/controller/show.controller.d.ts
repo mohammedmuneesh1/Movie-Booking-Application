@@ -1,5 +1,5 @@
 import type { AuthenticatedRequest } from "../../../middlewares/isAuth.js";
-import type { Response } from "express";
+import type { Request, Response } from "express";
 /**
  * @desc    Get tmdb india based now playing movies
  * @route   GET /api/shows/now-playing
@@ -28,5 +28,5 @@ export declare function GET_UNIQUE_SHOWS_CONTROLLER(req: AuthenticatedRequest, r
  * @access  Private  ⚠️
  * @returns  null  ⚠️
  */
-export declare function GET_SHOWS_BASED_ON_MOVIE_ID_CONTROLLER(req: AuthenticatedRequest, res: Response): Promise<Response<any, Record<string, any>>>;
+export declare function GET_SHOWS_BASED_ON_MOVIE_ID_CONTROLLER(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
 //# sourceMappingURL=show.controller.d.ts.map

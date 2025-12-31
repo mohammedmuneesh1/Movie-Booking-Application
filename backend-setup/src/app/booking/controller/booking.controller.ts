@@ -8,7 +8,7 @@ import ResponseHandler from "../../../utils/responseHandler.js";
 import ShowModel from "../../show/models/show.schema.js";
 import BookingModel from "../models/booking.schema.js";
 import { GET_ALL_BOOKINGS_SERVICE } from "../services/booking.service.js";
-
+import  stripe from 'stripe';
 const checkSeatsAvailability = async (showId:string,selectedSeats:string[])=>{
     try {
 
@@ -84,9 +84,56 @@ export async function CREATE_BOOKING_CONTROLLER(req:AuthenticatedRequest,res:Res
     //mutating a nested object, not reassigning it, using a dynamic key (seat)
     await showData.save();
 
-    // ⚠️⚠️ STRIPE GATEWAY INTIALIZE (PENDING) ⚠️⚠️
+// ⚠️⚠️ STRIPE GATEWAY INTIALIZE (PENDING) ⚠️⚠️
 
-    return ResponseHandler(res,200,true,booking,'Booking created successfully.');
+    const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY as string );
+
+     //creating line items for stripe 
+
+     const line_items=[{
+        price_data:{
+            currency:'usd',
+            product_data:{
+                 name:`${showData?.movieRef?.title} Movie`,
+                 description:showData?.movieRef?.description,
+            },
+            unit_amount:booking?.amount * 100,
+        },
+        quantity:1,
+     }];
+
+     const session = await stripeInstance.checkout.sessions.create({
+        success_url:`${origin}/loading/?next=/user/dashboard/bookings`,
+        cancel_url:`${origin}/user/dashboard/bookings`,
+        line_items,
+        mode:'payment',
+        metadata:{
+            bookingId:booking?._id?.toString(),
+        },
+        expires_at:Math.floor(Date.now() / 1000) + 30 * 60, // expires in 30 minutes 
+     });
+
+
+     booking.paymentLink = session.url;
+
+
+     await booking.save();
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return ResponseHandler(res,200,true,{
+        url:session.url,
+    },'Booking created successfully.');
 
 
 
@@ -123,6 +170,7 @@ export async function CREATE_BOOKING_CONTROLLER(req:AuthenticatedRequest,res:Res
 
 export async function GET_ALL_OCCUPIED_SEATS_BY_SHOWID(req:AuthenticatedRequest,res:Response){
     const {showId} = req.params;
+    console.log('request reached here',showId);
     const showData = await ShowModel.findById(showId).populate("movieRef");
     const occupiedSeats = Object.keys(showData?.occupiedSeats); 
     return ResponseHandler(res,200,true,occupiedSeats,'Occupied seats fetched successfully.');

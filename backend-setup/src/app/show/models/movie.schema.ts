@@ -1,7 +1,7 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 
-interface IMovie extends Document {
+export interface IMovie extends Document {
     title:string;
     movieId:string;
     overview?:string;
@@ -10,11 +10,13 @@ interface IMovie extends Document {
     release_date:string;
     original_language:string;
     tagline:string;
-    genres:string[];
-    casts:string[];
+    genres:any[];
+    casts:any[];
     vote_average:string;
     runtime:number;
     production_companies:prodctionCompaniesInterface[];
+trailer: trailerInterface | null; 
+
 }
 
 
@@ -25,6 +27,35 @@ interface prodctionCompaniesInterface{
     origin_country:string;
 }
 
+
+
+interface trailerInterface{
+     iso_639_1?: string;
+  iso_3166_1?: string;
+  name?: string;
+  key?: string;
+  site?: string;
+  size?: number;
+  type?: string;
+  official?: boolean;
+  published_at?: string;
+  id?: string;
+}
+
+
+
+const trailerSchema = new mongoose.Schema({
+    iso_639_1: String,
+    iso_3166_1: String,
+    name: String,
+    key: String,
+    site: String,
+    size: Number,
+    type: String,
+    official: Boolean,
+    published_at: String,
+    id: String
+}, { _id: false });
 
 
 const MovieSchema = new mongoose.Schema({
@@ -87,13 +118,15 @@ const MovieSchema = new mongoose.Schema({
     status:{
         type:String,
     },
-
-
+  trailer: {
+    type:trailerSchema,
+    default: null,
+    },
 },{
     timestamps:true
 });
 
-const MovieModel = mongoose.models.movie || mongoose.model<IMovie>("Movie",MovieSchema);
+const MovieModel = mongoose.model<IMovie>("Movie",MovieSchema);
 export default MovieModel;
 
 

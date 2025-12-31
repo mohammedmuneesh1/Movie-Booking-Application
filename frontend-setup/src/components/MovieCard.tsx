@@ -202,18 +202,13 @@ import { useAppContext } from "../context/useAppContext";
 
 //eslint-disable-next-line
 const MovieCard = ({movie}:{movie:any})=>{
-    console.log('movie',movie);
     const navigate = useNavigate();
-
-
     const {tmdbImageUrl} = useAppContext();
-    
     // const movieByIdNavigate = useCallback(()=>{
     //     navigate(`/movies/${movie._id}`);
     // },[]);
-
     const movieByIdNavigate =useCallback(()=>{
-        navigate(`/movies/${movie._id}`);
+        navigate(`/movies/${movie?.movieRef?._id}`);
     },
 []); 
     return(
@@ -225,21 +220,27 @@ const MovieCard = ({movie}:{movie:any})=>{
            duration-300 max-w-full w-full"
         //    w-66 max-w-full w-full 
         >
+
+            <div className="aspect-[16/13] w-full 
+            h-full overflow-hidden
+            ">
             <img
              src={tmdbImageUrl ? `${tmdbImageUrl}${movie?.movieRef?.backdrop_path}` : movie?.movieRef?.backdrop_path}
              alt="movie card image"
            onClick={movieByIdNavigate}
-             className="rounded-lg h-auto w-full
+             className="rounded-lg h-full w-full 
               object-cover  cursor-pointer"
             //  className="rounded-lg h-52 w-full
             //   object-cover  cursor-pointer"
             //   object-bottom-right
             />
+            </div>
 
             <p
              className="font-semibold mt-2  
-             text-slate-50 hover:text-white
-               truncate">
+             text-slate-50 hover:text-white 
+             line-clamp-1 pb-2
+               ">
                 {movie?.movieRef?.title ?? ""}
             </p>
 

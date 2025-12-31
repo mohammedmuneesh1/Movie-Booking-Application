@@ -6,11 +6,13 @@ import RenderSeats from "./RenderSeats";
 interface SelectSeatLayoutInterface {
     groupRows:Array<Array<string>>;
     selectedSeats:string[] ;
-    handleSeatclick:(seatId:string)=>void
+    handleSeatclick:(seatId:string)=>void;
+    occupiedSeats:string[];
 
 }
 
-const SelectSeatLayout:React.FC<SelectSeatLayoutInterface> = ({groupRows,handleSeatclick,selectedSeats})=>{
+const SelectSeatLayout:React.FC<SelectSeatLayoutInterface> = ({groupRows,handleSeatclick,selectedSeats,occupiedSeats})=>{
+
     return(
         <div className="text-white relative flex-1 flex flex-col items-center max-md:mt-16 ">
             <BlurCircle top="-100px" left="-100px" />
@@ -30,6 +32,7 @@ const SelectSeatLayout:React.FC<SelectSeatLayoutInterface> = ({groupRows,handleS
                 {
                     groupRows[0].map((val,index:number)=>(
                         <RenderSeats 
+                        occupiedSeats={occupiedSeats}
                         row={val}
                         key={index}
                         handleSeatclick={handleSeatclick}
@@ -57,6 +60,7 @@ const SelectSeatLayout:React.FC<SelectSeatLayoutInterface> = ({groupRows,handleS
                                     <RenderSeats 
                                     row={val}
                                     key={index}
+                                    occupiedSeats={occupiedSeats}
                                     handleSeatclick={handleSeatclick}
                                     selectedSeats={selectedSeats}
                                     />

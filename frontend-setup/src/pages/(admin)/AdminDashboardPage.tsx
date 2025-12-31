@@ -30,7 +30,6 @@ const AdminDashboardPage = ()=>{
         try {
             
             const res = await axiosInstance.get('/api/admin/dashboard');
-            console.log('res',res?.data?.data?.activeShows);
             setLoading(false);
             if(res?.data?.success){
                 setDashboardData(res?.data?.data);  

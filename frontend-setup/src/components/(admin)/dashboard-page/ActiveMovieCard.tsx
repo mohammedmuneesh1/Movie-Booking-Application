@@ -22,12 +22,10 @@ interface ActiveMovieCard{
 
 const ActiveMovieCard:React.FC<ActiveMovieCard> = ({data,customSyle,imgStyle,tmdbImageUrl}) => {
 
-  console.log('data.movieRef.vote_average',data?.movieRef?.vote_average);
   
 
 
     const currency = import.meta.env.VITE_CURRENCY;
-    console.log('${tmdbImageUrl}${data?.movie?.poster_path}',`${tmdbImageUrl}${data?.movieRef?.poster_path}`);
 
   return (
      <div className={`${customSyle} w-[260px] h-full rounded-xl

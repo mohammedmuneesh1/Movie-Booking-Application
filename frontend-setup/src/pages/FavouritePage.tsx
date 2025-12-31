@@ -80,7 +80,7 @@ fetch_favourite_movies();
   </div>
 
   <h3 className="text-lg font-semibold text-slate-100">
-    No Favourite Movies Found
+    No Saved Movies Found
   </h3>
 
   <p className="mt-2 max-w-sm text-sm text-gray-400">

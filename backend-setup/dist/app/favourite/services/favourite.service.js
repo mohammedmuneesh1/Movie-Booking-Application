@@ -34,4 +34,11 @@ export async function TOP_10_FAVOURITE_MOVIES_SERVICE() {
     ]);
     return userTop10FavouriteMovies;
 }
+export async function IS_FAVOURITE_EXIST_SERVICE(userId, movieId) {
+    const isMovieExist = await FavoriteModel.findOne({
+        movieRef: movieId,
+        user: userId
+    });
+    return isMovieExist;
+}
 //# sourceMappingURL=favourite.service.js.map

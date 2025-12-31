@@ -35,7 +35,6 @@ const AdminListShowsPage = ()=>{
         try {
 
             const res = await axiosInstance.get('/api/show/all');
-            console.log('res',res?.data?.data);
             setLoading(false);
 
             if(res?.data?.success === true) {

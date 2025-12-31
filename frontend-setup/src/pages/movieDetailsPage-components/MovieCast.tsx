@@ -6,6 +6,10 @@ interface MovieCastInterface{
 }
 
 const MovieCast:React.FC<MovieCastInterface> = ({castData})=>{
+
+    //eslint-disable-next-line 
+    const movieImgURL = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
+
     return(
         castData ? (
         <div className="text-white">
@@ -18,16 +22,16 @@ const MovieCast:React.FC<MovieCastInterface> = ({castData})=>{
                 <div className="flex items-center gap-4 w-max px-4 ">
 
                {
-                castData?.slice(0,12).map(
+                castData?.map(
                     //eslint-disable-next-line
                     (cast:any,index:number)=>(
                         <div key={index}
                         className="flex flex-col cursor-pointer items-center text-center gap-3"
                         >
                             <img 
-                            src={cast?.profile_path}
+                            src={`${movieImgURL}${cast?.profile_path}`}
                             alt=""
-                            className="rounded-full h-20 md:h-20 aspect-square object-cover"
+                            className="rounded-full h-20 w-20  aspect-square object-cover ppionter-events-none"
                             />
                      <p className="font-medium text-xs">{cast?.name ?? ""}</p>
                         </div>

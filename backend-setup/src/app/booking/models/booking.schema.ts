@@ -39,8 +39,6 @@ const bookingSchema = new mongoose.Schema({
     paymentLink:{
         type:String,
     }
-
-
 },{
     timestamps:true,
     minimize:false

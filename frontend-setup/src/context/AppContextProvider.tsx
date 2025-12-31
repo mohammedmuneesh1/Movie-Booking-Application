@@ -109,7 +109,6 @@ const fetch_favourite_movies  = async ()=>{
       if(!nowPlaying){
           try {
             const res = await axiosInstance.get("/api/show/unique-shows");
-            console.log('res',res?.data?.data);
             setNowPlayingLoading(false);
             if (res?.data?.success) {
               setNowPlaying(res?.data?.data ?? null);

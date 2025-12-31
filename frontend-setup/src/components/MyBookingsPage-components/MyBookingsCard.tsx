@@ -10,6 +10,9 @@ interface MyBookingsCardInterface{
 const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
 
       const currency = import.meta.env.VITE_CURRENCY;
+      const imageBaseUrl = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
+
+      console.log('imge',`${imageBaseUrl}${data?.show?.movieRef?.poster_path}`)
 
     return(
         <div
@@ -22,15 +25,15 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
 
           <div className="flex flex-col md:flex-row">
           <img 
-          src={data?.show.movie.poster_path}
+          src={`${imageBaseUrl}${data?.show?.movieRef?.poster_path} `}
         alt="movie poster"
         // className="h-40 w-40 object-cover rounded-lg" 
         className="md:max-w-45 w-full h-auto aspect-video object-cover object-bottom rounded "
         />
 
         <div className="flex flex-col p-4 ">
-            <p className="text-lg font-semibold">{data?.show.movie.title}</p>
-            <p className="text-sm text-gray-400">{timeFormat(data?.show.movie.runtime)}</p>
+            <p className="text-lg font-semibold">{data?.show.movieRef.title}</p>
+            <p className="text-sm text-gray-400">{timeFormat(data?.show.movieRef.runtime)}</p>
             <p className="text-sm text-gray-400 mt-auto">{isoDateTimeFormatForCountry(data?.show.showDateTime)}</p>
 
         </div>

@@ -17,6 +17,11 @@ import AdminListShowsPage from './pages/(admin)/AdminListShowsPage'
 import AdminMiddleware from './middleware/AdminMiddleware'
 import AdminLoginPage from './components/(admin)/AdminLogin'
 import NotFoundPage from './components/NotFoundPage'
+import UserSideLayout from './layout/UserSideLayout'
+import ClientDashboardPage from './components/(client)/ClientDashboardPage'
+import UserProfilePage from './pages/(client)/UserProfilepage'
+import UserSavedMoviesPage from './pages/(client)/userSavedMoviesPage'
+import LoadingPage from './components/LoadingPage'
 
 
 
@@ -35,7 +40,8 @@ function App() {
         <Route path="/movies" element={<MoviesPage />} />
         <Route path="/movies/:id" element={<MovieDetailsPage />} />
         <Route path="/movies/:id/:date" element={<SeatLayoutPage />} />
-        <Route path="/my-bookings" element={<MyBookingsPage />} />
+        <Route path="/loading" element={<LoadingPage />} />
+        {/* <Route path="/my-bookings" element={<MyBookingsPage />} /> */}
         <Route path="/favourites" element={<FavouritePage />} />
         <Route path="/login" element={<AdminLoginPage/>} />
       </Route>
@@ -54,10 +60,21 @@ function App() {
   </Route>
 </Route>
 
-<Route path="/user/dashboard" element={<AdminMiddleware />}>
-  <Route element={<AdminSideLayout />}>
-  </Route>
+{/* <Route path="/user/dashboard" element={<AdminMiddleware />}> */}
+<Route path="/user/dashboard" element={<UserSideLayout />}>
+    <Route index element={<ClientDashboardPage />} />
+   <Route path="bookings" element={<MyBookingsPage />} />
+   <Route path="profile" element={<UserProfilePage />} />
+   <Route path="saved-movies" element={<UserSavedMoviesPage />} />
 </Route>
+
+
+{/* <Route path="/user/dashboard" element={<UserSideLayout />}>
+  <Route index element={<ClientDashboardPage />} />
+  <Route path="bookings" element={<AdminListShowsPage />} />
+</Route> */}
+
+
 
 <Route path="*" element={<NotFoundPage />} />
 {/* ✔️ This allows URLs like:

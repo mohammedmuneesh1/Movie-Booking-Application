@@ -7,7 +7,8 @@ import isoTimeFormatForCountry from "../../lib/isoTimeFormat";
 interface AvailableTimingInterface{
     availableTimingsData:ShowTimeInterface[];
     selectedtime:null | ShowTimeInterface;
-    setSelectedTime:React.Dispatch<React.SetStateAction<null | ShowTimeInterface>>;
+    //eslint-disable-next-line 
+    setSelectedTime:(val:any)=>void;
 }
 
 const AvailableTiming:React.FC<AvailableTimingInterface> = ({availableTimingsData,selectedtime,setSelectedTime})=>{

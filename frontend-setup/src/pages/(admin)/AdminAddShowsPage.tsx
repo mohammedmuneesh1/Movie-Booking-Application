@@ -33,7 +33,6 @@ const AdminAddShowsPage = ()=>{
         try {
             const res = await axiosInstance.get("/api/show/now-playing");
             setIsLoading(false);
-            console.log('res',res?.data?.data?.movies);
             if(res?.data?.success === true) {
                 setNowPlayingMovies(res?.data?.data?.movies ?? []);
             }
@@ -113,7 +112,6 @@ return {
             }
         })
     }
-console.log('dateTimeSelection',dateTimeSelection);
 
 
  
@@ -156,21 +154,24 @@ const handleSubmit = async ()=>{
     }
 
     const res = await axiosInstance.post('/api/show/add-show',payload);
-    console.log('res',res);
 
-    setAddingShow(false);
 
     if(res?.data?.success === true) {
         toast.success(res?.data?.response ?? "Show added successfully.");
         setShowPrice('');
         setDateTimeSelection({});
         setSelectedMovie(null);
+        setDateTimeInput('');
     } 
     else{
         toast.error(res?.data?.response ?? "Technical Issue in adding show. Please try again later.");
     }
     } catch (error) {
         console.error("error FS",error instanceof Error ? error.message : error);
+        toast.error("Technical Issue in adding show. Please try again later.");
+    }
+    finally{
+    setAddingShow(false);
     }
 }
 

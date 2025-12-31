@@ -1,9 +1,12 @@
 import axios from "axios";
 import type { AuthenticatedRequest } from "../../../middlewares/isAuth.js";
-import type { Response } from "express";
+import type { Request, Response } from "express";
 import ResponseHandler from "../../../utils/responseHandler.js";
 import MovieModel from "../models/movie.schema.js";
 import ShowModel from "../models/show.schema.js";
+import { getBestPlayableVideo } from "../services/show.service.js";
+import { getTokenDataIfExist } from "../../../utils/getTokenDataIfExist.js";
+import { IS_FAVOURITE_EXIST_SERVICE } from "../../favourite/services/favourite.service.js";
 
 
 
@@ -18,6 +21,8 @@ import ShowModel from "../models/show.schema.js";
 
 
 export async function  GET_NOW_PLAYING_MOVIES_CONTROLLER (req:AuthenticatedRequest, res:Response) {
+
+    console.log('request hit here')
 
 
 
@@ -79,14 +84,11 @@ return ResponseHandler(res,200,true,{
 export async function ADD_NEW_MOVIE_SHOW_CONTROLLER (req:AuthenticatedRequest, res:Response) {
 
     const {movieId,showsInput,showPrice} = req.body;
-    console.log('request reached here',showsInput);
-
     let isMovieExist = await MovieModel.findOne({movieId});
 
     if(!isMovieExist){
-        console.log('inside it ')
         //IF NOT MOVIE EXIST, FETCH MOVIED DATA FROM TMDB;
-        const [movieDetailsResponse,movieCreditsResponse]  = await Promise.all([
+        const [movieDetailsResponse,movieCreditsResponse,movieTrailerDetails]  = await Promise.all([
         //     movieDetailsResponse → what the movie is
         //    movieCreditsResponse → who made the movie
             axios.get(
@@ -98,7 +100,15 @@ export async function ADD_NEW_MOVIE_SHOW_CONTROLLER (req:AuthenticatedRequest, r
                     },
                 }
             ),
+
+
  axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits`,{
+    params:{
+    api_key: process.env.TMDB_API_KEY,
+      language: 'en-US',  // UI language (for translations)
+    },
+}),
+axios.get(`https://api.themoviedb.org/3/movie/${movieId}/videos`,{
     params:{
     api_key: process.env.TMDB_API_KEY,
       language: 'en-US',  // UI language (for translations)
@@ -114,6 +124,10 @@ export async function ADD_NEW_MOVIE_SHOW_CONTROLLER (req:AuthenticatedRequest, r
 
  const movieApiData = movieDetailsResponse?.data;
  const movieCreditsData =movieCreditsResponse.data;
+ const movieTrailerData = getBestPlayableVideo(movieTrailerDetails?.data?.results);
+
+ console.log('movieTrailerData',movieTrailerDetails?.data);
+ console.log('filtered data',movieTrailerData);
 
 
 
@@ -132,12 +146,13 @@ const movieDetails = {
     tagline:movieApiData.tagline || "",
     vote_average:movieApiData.vote_average,
     runtime:movieApiData.runtime,
+    ...(movieTrailerData&& {trailer:movieTrailerData})
     // movieCredits:movieCreditsData,
     // shows:showsInput,
     // showPrice:showPrice
 };
 
-isMovieExist = await MovieModel.create(movieDetails);
+isMovieExist = await MovieModel.create(movieDetails );
     
 }
 
@@ -177,7 +192,7 @@ showsInput.forEach((show:any)=>{
 
         // const dateTimeString = `${showDate}T${time}`;
         showsToCreate.push({
-            movieRef:isMovieExist._id,
+            movieRef: isMovieExist._id.toString(),
             movieId,
             showDateTime:showDateTime as Date,
             showPrice,
@@ -287,17 +302,30 @@ export async function GET_UNIQUE_SHOWS_CONTROLLER (req:AuthenticatedRequest, res
 //     { time: "2025-06-06T14:30:00.000Z", showId: "ghi789" }
 //   ]
 // }
-export async function GET_SHOWS_BASED_ON_MOVIE_ID_CONTROLLER(req:AuthenticatedRequest, res:Response) {
+export async function GET_SHOWS_BASED_ON_MOVIE_ID_CONTROLLER(req:Request, res:Response) {
     const {movieId } = req.params;
-    const isMovieExist = await MovieModel.findOne({movieId});
+    
+    if(!movieId) {
+        return ResponseHandler(res,200,false,null,'Movie id is required.');
+    }
+    
+    
+    const isMovieExist = await MovieModel.findOne({_id:movieId});
+    
+    
     if(!isMovieExist){
         return ResponseHandler(res,200,false,null,'Movie not found.');
-    }
+    };
+
+
+    
 
     const shows = await ShowModel.find({
-        movieId,
+        movieRef:movieId,
         showDateTime:{$gte:new Date()}
     });
+
+
     
     const dateTime:any = {};
 
@@ -307,7 +335,6 @@ export async function GET_SHOWS_BASED_ON_MOVIE_ID_CONTROLLER(req:AuthenticatedRe
         const date = show.showDateTime.toISOString().split('T')[0];
         //toISOString() converts a JavaScript Date object into a standard ISO 8601 string.
 
-        console.log('show.showDateTime',show.showDateTime);
         if(!dateTime[date]){
             dateTime[date] = [];
         }
@@ -321,11 +348,31 @@ export async function GET_SHOWS_BASED_ON_MOVIE_ID_CONTROLLER(req:AuthenticatedRe
 
         
         
-           console.log('dateTime',dateTime);
+
+
+
+    //the favouriteCheck 
+
+    let isFavouriteAdded = false;
+
+
+    const isTokenExist = getTokenDataIfExist(req)
+
+    if(isTokenExist && (isTokenExist as any)?.id){
+        
+    const isFavouriteExist = await  IS_FAVOURITE_EXIST_SERVICE((isTokenExist as any)?.id as string, movieId as string);
+
+
+    if(isFavouriteExist){
+        isFavouriteAdded = true;
+    }    
+    }
+
 
     return ResponseHandler(res,200,true,{
         movieData:isMovieExist,
         dateTime:dateTime,
+        isFavourite:isFavouriteAdded,
     },'Shows fetched successfully.');
 
 }

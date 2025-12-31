@@ -1,4 +1,16 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose, { Document } from "mongoose";
+const trailerSchema = new mongoose.Schema({
+    iso_639_1: String,
+    iso_3166_1: String,
+    name: String,
+    key: String,
+    site: String,
+    size: Number,
+    type: String,
+    official: Boolean,
+    published_at: String,
+    id: String
+}, { _id: false });
 const MovieSchema = new mongoose.Schema({
     movieId: {
         type: String,
@@ -59,10 +71,14 @@ const MovieSchema = new mongoose.Schema({
     status: {
         type: String,
     },
+    trailer: {
+        type: trailerSchema,
+        default: null,
+    },
 }, {
     timestamps: true
 });
-const MovieModel = mongoose.models.movie || mongoose.model("Movie", MovieSchema);
+const MovieModel = mongoose.model("Movie", MovieSchema);
 export default MovieModel;
 // vote_count:{
 //     type:String,

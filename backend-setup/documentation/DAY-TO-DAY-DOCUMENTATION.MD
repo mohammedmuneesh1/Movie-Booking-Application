@@ -228,6 +228,65 @@ Final shape WITH $unwind
 //-------------------------------------------------- 27/12/2025 
 END----------------------------------------------------------
 
+//-------------------------------------------------- 30/12/2025 
+START ----------------------------------------------------------
+Yes.
+A return inside a for...of loop immediately exits BOTH:
+
+the loop
+the function itself
+No debate. No edge case.
+What happens in your code (step-by-step)
+for (const type of PRIORITY) {
+  ...
+  return selected;
+}
+
+
+Execution flow:
+Loop starts with first type
+Finds candidates
+Picks selected
+Hits return selected
+Function exits immediately
+Loop is terminated
+Nothing after this runs
+
+So yes:
+
+❌ loop does NOT continue
+❌ next priority types are NOT checked
+✅ function returns selected
+This is exactly what you want in this logic.
+
+//-------------------------------------------------- 30/12/2025 
+END ----------------------------------------------------------
+
+
+//-------------------------------------------------- 31/12/2025 
+START ----------------------------------------------------------
+
+
+INSTALLING STRIPE PACKAGE
+
+i) npm install stripe
+ii) after that we have to add another package ---> npm install svix   ---> that will be used for to verify stripe payment, strip webhooks, to manage stripe webhooks, we use svix 
+iii)  
+
+
+
+
+
+
+
+
+//-------------------------------------------------- 31/12/2025 
+END ----------------------------------------------------------
+
+
+
 
 
 // "start": "env-cmd -f .env node dist/app/server.js",
+
+

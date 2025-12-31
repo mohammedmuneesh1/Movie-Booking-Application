@@ -1,57 +1,45 @@
 import type { Response } from "express";
 import type { AuthenticatedRequest } from "../../../middlewares/isAuth.js";
 import ResponseHandler from "../../../utils/responseHandler.js";
-import { IS_MOVIE_EXIST_ON_FAVOURITE_SERVICE, IS_MOVIE_EXIST_WITH_MOVIE_ID_SERVICE } from "../../show/services/show.service.js";
+import { IS_MOVIE_EIXST_SERVICE } from "../../show/services/show.service.js";
 import FavoriteModel from "../models/favourite.schema.js";
 
 
 
 export async function ADD_OR_REMOVE_FAVOURITE_MOVIE_CONTROLLER(req:AuthenticatedRequest,res:Response){
-    // interface IFavorite extends Document {
-    //   user: mongoose.Schema.Types.ObjectId;
-    //   movie: mongoose.Schema.Types.ObjectId;
-    //   movieId: string;
-    // }
-
-
+    
     const userId = req.user?.id;
     const {movieId} = req.body;
+    const isMovieExist = await IS_MOVIE_EIXST_SERVICE(movieId);
 
-
-    const isMovieExist = await IS_MOVIE_EXIST_WITH_MOVIE_ID_SERVICE(movieId);
     if(!isMovieExist){
         return ResponseHandler(res,200,false,null,"Movie dont exist. please try after sometimes.")
     }
+    
+  // Try delete first (fast path)
 
+  console.log('movieId',movieId,'userId',userId);
 
-      const deleteResult = await FavoriteModel.deleteOne({
+  const deleted = await FavoriteModel.findOneAndDelete({
     user: userId,
-    movie: isMovieExist._id,
+    movieRef: isMovieExist?._id,
   });
+  console.log('deleted',deleted);
 
 
-    if (deleteResult.deletedCount === 1) {
+  if (deleted) {
     return ResponseHandler(res, 200, true, null, "Movie removed from favourite.");
   }
 
 
-   // 3️⃣ If nothing deleted → create
-      await FavoriteModel.create({
-      user: userId,
-      movie: isMovieExist._id,
-      movieId: isMovieExist.movieId,
-    });
+  // If not deleted → add
+  await FavoriteModel.create({
+    user: userId,
+    movieId: isMovieExist.movieId,
+    movieRef: isMovieExist._id,
+  });
 
-
-
-
-
-
-
-
-
-
-
+return ResponseHandler(res,200,true,null,"Movie added to favourite.");
 
     // BOTTOM APPROACH ISSUE : 3 QUERY 
 //     const isFavouriteExist =await  IS_MOVIE_EXIST_ON_FAVOURITE_SERVICE(movieId,userId);
@@ -66,10 +54,6 @@ export async function ADD_OR_REMOVE_FAVOURITE_MOVIE_CONTROLLER(req:Authenticated
 //   movieRef: isMovieExist?._id,
 //   movieId: isMovieExist?.movieId,
 // });
-
-
-
-return ResponseHandler(res,200,true,null,"Movie added to favourite.");
 
 }
 
