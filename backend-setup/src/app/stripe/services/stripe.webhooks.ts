@@ -9,7 +9,7 @@ import connectDB from '../../../config/db.js';
 
 export const stripeWebHooks = async (request:Request,response:Response)=>{
     
-
+    console.log('stripeWebHooks called');
     
   // ✅ SAFETY NET FOR WEBHOOK (required)
   if (mongoose.connection.readyState !== 1) {

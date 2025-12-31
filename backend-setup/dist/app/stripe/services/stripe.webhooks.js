@@ -5,6 +5,7 @@ import PaymentModel from '../models/payment.schema.js';
 import mongoose from 'mongoose';
 import connectDB from '../../../config/db.js';
 export const stripeWebHooks = async (request, response) => {
+    console.log('stripeWebHooks called');
     // ✅ SAFETY NET FOR WEBHOOK (required)
     if (mongoose.connection.readyState !== 1) {
         await connectDB();
