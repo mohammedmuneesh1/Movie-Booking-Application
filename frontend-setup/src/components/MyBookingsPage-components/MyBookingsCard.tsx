@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { isoDateTimeFormatForCountry } from "../../lib/isoTimeFormat";
 import { timeFormat } from "../../lib/timeFormat";
 
@@ -12,7 +13,8 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
       const currency = import.meta.env.VITE_CURRENCY;
       const imageBaseUrl = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
 
-      console.log('imge',`${imageBaseUrl}${data?.show?.movieRef?.poster_path}`)
+      console.log('imge',data);
+      
 
     return(
         <div
@@ -49,11 +51,13 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
 
         {/* PRICE + PAY NOW BUTTON START */}  
          <div className="flex items-center gap-4">
-            <p className="text-2xl font-semibold mb-3">{currency} {data.amount}</p>
-            {!data.isPaid && (
-                <button className="btnCommonDesign text-sm rounded-full! ">
+            <p className="text-2xl font-semibold mb-3">{currency} {data?.paymentId?.amount }</p>
+            {!data?.paymentId?.isPaid && (
+                <Link
+                to={data?.paymentId?.paymentLink}
+                className="btnCommonDesign text-sm rounded-full! ">
                 Pay Now 
-            </button>
+            </Link>
         )}
         </div>
         {/* PRICE + PAY NOW BUTTON END */}  

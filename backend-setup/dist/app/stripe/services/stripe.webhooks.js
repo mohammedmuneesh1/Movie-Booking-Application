@@ -1,6 +1,7 @@
 import stripe from 'stripe';
 import ResponseHandler from '../../../utils/responseHandler.js';
 import BookingModel from '../../booking/models/booking.schema.js';
+import PaymentModel from '../models/payment.schema.js';
 export const stripeWebHooks = async (request, response) => {
     const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY); //1
     const sig = request.headers['stripe-signature'];
@@ -19,14 +20,17 @@ export const stripeWebHooks = async (request, response) => {
                     payment_intent: paymentIntent.id,
                     limit: 1,
                 });
+                //BOTH ARE SAME 
+                // paymentIntent.id → "pi_123"
+                // session.payment_intent → "pi_123"
                 const session = sessionList.data[0];
-                const { bookingId } = session?.metadata;
-                if (!bookingId)
+                const { bookingId, paymentCustomUniqueId } = session?.metadata;
+                if (!bookingId || !paymentCustomUniqueId)
                     return ResponseHandler(response, 200, false, null, 'stripe webhook error:Booking id not found.');
-                await BookingModel.findByIdAndUpdate(bookingId, {
-                    isPaid: true,
-                    // paymentLink:"" if needed remove the payment link
-                });
+                const payment = await PaymentModel.findOneAndUpdate({
+                    booking: bookingId,
+                    paymentCustomUniqueId
+                }, { status: "succeeded" });
                 break;
             }
             default:

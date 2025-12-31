@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 ;
 const bookingSchema = new mongoose.Schema({
     user: {
@@ -6,26 +6,19 @@ const bookingSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
+    paymentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Payment",
+    },
     show: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Show",
-        required: true
-    },
-    amount: {
-        type: Number,
         required: true
     },
     bookedSeats: {
         type: Array,
         required: true,
     },
-    isPaid: {
-        type: Boolean,
-        default: false
-    },
-    paymentLink: {
-        type: String,
-    }
 }, {
     timestamps: true,
     minimize: false

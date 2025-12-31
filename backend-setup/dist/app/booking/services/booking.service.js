@@ -11,6 +11,9 @@ export async function GET_ALL_BOOKINGS_SERVICE() {
                     path: 'movieRef',
                     model: 'Movie',
                 }]
+        }, {
+            path: 'paymentId',
+            model: 'Payment',
         }
     ]).sort({ createdAt: -1 });
     return bookings;

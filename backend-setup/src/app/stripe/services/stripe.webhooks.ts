@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import stripe from 'stripe';
 import ResponseHandler from '../../../utils/responseHandler.js';
 import BookingModel from '../../booking/models/booking.schema.js';
+import PaymentModel from '../models/payment.schema.js';
 
 
 export const stripeWebHooks = async (request:Request,response:Response)=>{
@@ -11,15 +12,12 @@ export const stripeWebHooks = async (request:Request,response:Response)=>{
     let event;
     try {
         event = stripeInstance.webhooks.constructEvent(request.body,sig as string,process.env.STRIPE_WEBHOOK_SECRET as string); //2
-
-        
     } catch (error) {
         return ResponseHandler(response,200,false,null,`Stripe webhook error. ${error instanceof Error ? error.message: error}`);
     }
 
 
     try {
-
 
         switch(event.type){
    
@@ -30,13 +28,25 @@ export const stripeWebHooks = async (request:Request,response:Response)=>{
                     payment_intent:paymentIntent.id,
                     limit:1,
                 });
+
+                 //BOTH ARE SAME 
+                // paymentIntent.id → "pi_123"
+                // session.payment_intent → "pi_123"
+                
                 const session = sessionList.data[0];
-                const {bookingId} = session?.metadata as {bookingId:string};
-                if(!bookingId) return ResponseHandler(response,200,false,null,'stripe webhook error:Booking id not found.');
-                await BookingModel.findByIdAndUpdate(bookingId,{
-                    isPaid:true,
-                    // paymentLink:"" if needed remove the payment link
-                });
+                const {bookingId,paymentCustomUniqueId } = session?.metadata as {bookingId:string,paymentCustomUniqueId:string};
+                if(!bookingId || !paymentCustomUniqueId) return ResponseHandler(response,200,false,null,'stripe webhook error:Booking id not found.');
+
+
+
+                const payment = await PaymentModel.findOneAndUpdate(
+                    {
+                    booking:bookingId,
+                    paymentCustomUniqueId
+                },
+                { status: "succeeded" }
+                );
+
                 break;
             }
     

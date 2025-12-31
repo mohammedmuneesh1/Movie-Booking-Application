@@ -1,5 +1,9 @@
 //-------------------------------------------------- 04/12/2025 START ----------------------------------------------------------
 
+
+//IMP: USED WEBHOOK ON THIS PROJECT FOR STRIPE 
+
+
 1) INSTALLING CLERK ON EXPRESS 
 
 npm install @clerk/express
