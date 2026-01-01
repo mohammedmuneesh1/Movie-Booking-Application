@@ -68,7 +68,6 @@ export const stripeWebHooks = async (request, response) => {
                 //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND END
                 const payment = await PaymentModel.findOneAndUpdate({
                     paymentCustomUniqueId: paymentCustomUniqueId,
-                    userId: userId,
                 }, {
                     status: "succeeded",
                     isPaid: true,
@@ -80,15 +79,16 @@ export const stripeWebHooks = async (request, response) => {
                 booking.status = "CONFIRMED";
                 await booking.save();
                 // SEND CONFIRMATION EMAIL 
-                // try {
-                //   await inngest.send({
-                //     name: "app.bookingConfirmationEemail",
-                //     data: { bookingId },
-                //   });
-                // } catch (inngestError) {
-                //   // Log but don't fail the request - booking is already saved
-                //   console.error("Inngest send failed:", inngestError);
-                // }
+                try {
+                    await inngest.send({
+                        name: "app.bookingConfirmationEemail",
+                        data: { bookingId },
+                    });
+                }
+                catch (inngestError) {
+                    // Log but don't fail the request - booking is already saved
+                    console.error("Inngest send failed:", inngestError);
+                }
                 break;
             }
             default:

@@ -2,6 +2,8 @@ import { Inngest } from "inngest";
 import BookingModel from "../../app/booking/models/booking.schema.js";
 import ShowModel from "../../app/show/models/show.schema.js";
 import { sendEmail } from "../nodeMailerConfig.js";
+import connectDB from "../db.js";
+import mongoose from "mongoose";
 /**
  * 1️⃣ Create Inngest client
  * This is REQUIRED. Inngest is NOT a function.
@@ -62,6 +64,9 @@ async ({ event, step }) => {
 });
 export const sendBookingConfirmationEmail = inngest.createFunction({ id: "send-booking-confirmation-email" }, { event: "app.bookingConfirmationEemail" }, async ({ event, step }) => {
     const { bookingId } = event?.data;
+    if (mongoose.connection.readyState !== 1) {
+        await connectDB();
+    }
     const booking = await BookingModel.findById(bookingId).populate([
         {
             path: "show",
