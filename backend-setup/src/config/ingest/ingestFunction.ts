@@ -105,7 +105,7 @@ export const releaseSeatsAndDeleteBookings = inngest.createFunction(
 
 export const sendBookingConfirmationEmail = inngest.createFunction(
   { id: "send-booking-confirmation-email" },
-  { event: "app.bookingConfirmationEemail" },
+  { event: "app.bookingConfirmationEmail" },
   async ({ event, step }) => {
 
  
@@ -128,7 +128,8 @@ export const sendBookingConfirmationEmail = inngest.createFunction(
       model:"User",
     }
   ]);
-
+   
+  console.log('booking?.user?.email',booking?.user?.email);
   // sendEmail
 
   await sendEmail({

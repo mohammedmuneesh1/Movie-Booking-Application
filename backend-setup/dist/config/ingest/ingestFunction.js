@@ -62,7 +62,7 @@ async ({ event, step }) => {
         await booking.save();
     });
 });
-export const sendBookingConfirmationEmail = inngest.createFunction({ id: "send-booking-confirmation-email" }, { event: "app.bookingConfirmationEemail" }, async ({ event, step }) => {
+export const sendBookingConfirmationEmail = inngest.createFunction({ id: "send-booking-confirmation-email" }, { event: "app.bookingConfirmationEmail" }, async ({ event, step }) => {
     const { bookingId } = event?.data;
     if (mongoose.connection.readyState !== 1) {
         await connectDB();
@@ -79,6 +79,7 @@ export const sendBookingConfirmationEmail = inngest.createFunction({ id: "send-b
             model: "User",
         }
     ]);
+    console.log('booking?.user?.email', booking?.user?.email);
     // sendEmail
     await sendEmail({
         to: booking?.user?.email,
