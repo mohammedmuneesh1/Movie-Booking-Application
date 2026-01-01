@@ -37,8 +37,12 @@ async ({ event, step }) => {
         const booking = await BookingModel
             .findById(bookingId)
             .populate("paymentId");
-        // Booking deleted or already paid → exit safely
-        if (!booking || booking.paymentId?.isPaid) {
+        // ❗ Already handled or paid
+        if (!booking || booking.status !== "PENDING_PAYMENT") {
+            return;
+        }
+        // Payment completed in time → do nothing
+        if (booking.paymentId?.isPaid) {
             return;
         }
         const show = await ShowModel.findById(booking.show);
@@ -50,8 +54,9 @@ async ({ event, step }) => {
         }
         show.markModified("occupiedSeats");
         await show.save();
-        // ❌ Delete booking
-        await BookingModel.findByIdAndDelete(booking._id);
+        // ❗— MARK EXPIRED
+        booking.status = "EXPIRED";
+        await booking.save();
     });
 });
 //# sourceMappingURL=ingestFunction.js.map

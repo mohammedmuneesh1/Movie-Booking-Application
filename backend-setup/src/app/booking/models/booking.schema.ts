@@ -1,42 +1,49 @@
 import mongoose, { Document, Types } from "mongoose";
 
+interface IBooking extends Document {
+  user: string;
+  show: string;
+  bookedSeats: string[];
+  paymentId: Types.ObjectId;
+}
 
-
-
-
-interface IBooking extends Document{
-    user:string;
-    show:string;
-    bookedSeats:string[];
-    paymentId: Types.ObjectId;
-};
-
-const bookingSchema = new mongoose.Schema({
-    user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+const bookingSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    paymentId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Payment",
+    paymentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Payment",
     },
-    show:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Show",
-        required:true
+    status: {
+      type: String,
+      enum: ["PENDING_PAYMENT", "CONFIRMED", "EXPIRED", "CANCELLED"],
+      default: "PENDING_PAYMENT",
     },
-    bookedSeats:{
-        type:Array,
-        required:true,
+    expiresAt: {
+      type: Date,
+      required: true,
     },
 
-},{
-    timestamps:true,
-    minimize:false
-});
+    show: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Show",
+      required: true,
+    },
+    bookedSeats: {
+      type: Array,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+    minimize: false,
+  }
+);
 
-const BookingModel  =mongoose.models.booking || mongoose.model<IBooking>('Booking',bookingSchema);
+const BookingModel =
+  mongoose.models.booking || mongoose.model<IBooking>("Booking", bookingSchema);
 export default BookingModel;
-
-

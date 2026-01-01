@@ -51,6 +51,7 @@ export const releaseSeatsAndDeleteBookings = inngest.createFunction(
     // ⏳ Wait 10 minutes (CORRECT WAY)
     await step.sleep("wait-for-10-minutes", "10m");
 
+
     //"10m" → 10 minutes, "1h" → 1 hour, "30s" → 30 seconds , "1d" → 1 day
 
     //“Persist the workflow state, stop executing now, and resume this exact workflow after 10 minutes, even if the server crashes or restarts.”
@@ -64,10 +65,19 @@ export const releaseSeatsAndDeleteBookings = inngest.createFunction(
         .findById(bookingId)
         .populate("paymentId");
 
-      // Booking deleted or already paid → exit safely
-      if (!booking || booking.paymentId?.isPaid) {
+            // ❗ Already handled or paid
+    if (!booking || booking.status !== "PENDING_PAYMENT") {
         return;
       }
+
+
+            // Payment completed in time → do nothing
+      if (booking.paymentId?.isPaid) {
+        return;
+      }
+
+
+
 
       const show = await ShowModel.findById(booking.show);
       if (!show) return;
@@ -80,8 +90,9 @@ export const releaseSeatsAndDeleteBookings = inngest.createFunction(
       show.markModified("occupiedSeats");
       await show.save();
 
-      // ❌ Delete booking
-      await BookingModel.findByIdAndDelete(booking._id);
+      // ❗— MARK EXPIRED
+      booking.status = "EXPIRED";
+      await booking.save();
     });
   }
 );

@@ -71,6 +71,7 @@ const AppContextProvider = ({children}:{children:React.ReactNode}) => {
 const fetchShows  = async ()=>{
     try {
         const res = await axiosInstance.get('/api/show/all')
+        console.log('res from fetching shows ',res?.data);
         if(res?.data?.success === true) {
             setShows(res?.data?.data);
         } 
@@ -79,7 +80,6 @@ const fetchShows  = async ()=>{
         }
     } catch (error) {
         console.error("error FS",error instanceof Error ? error.message : error);
-        
     }
 }
 
@@ -97,6 +97,7 @@ const fetch_favourite_movies  = async ()=>{
         }
     } catch (error) {
         console.error("error FS",error instanceof Error ? error.message : error);
+        console.error("error FS", error);
         
     }
 }

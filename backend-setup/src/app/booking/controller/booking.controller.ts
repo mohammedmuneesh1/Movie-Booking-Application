@@ -86,6 +86,23 @@ export async function CREATE_BOOKING_CONTROLLER(
       throw new Error("Show not found");
     }
 
+
+      const stripePaymentExpiresOnSeconds = Math.floor(Date.now() / 1000) + 30 * 60;  //30 minute 
+    //==================================
+    //⚠️⚠️⚠️⚠️⚠️ :STIRPE REQUIRED MINIMUM 30 MINUTE VALIDATION 
+//==================================
+
+    // THERE
+    //“Take the current time (in seconds since 1970), then add 1800 seconds (30 minutes).” 
+    //30 * 60 = 1800 seconds
+
+    const bookingExpirationTime = new Date(Date.now() + 10 * 60 * 1000);
+    const paymentExpiresOnDate = new Date(stripePaymentExpiresOnSeconds * 1000);
+    //* 1000  -->  seconds * 1000 -> milliseconds 
+
+
+
+
     // 3️⃣ Create booking
     const booking = await BookingModel.create(
       [
@@ -93,6 +110,8 @@ export async function CREATE_BOOKING_CONTROLLER(
           user: userId,
           show: showId,
           bookedSeats: selectedSeats,
+          expiresAt: bookingExpirationTime,
+
         },
       ],
       { session: mongoSession }
@@ -119,34 +138,23 @@ export async function CREATE_BOOKING_CONTROLLER(
 
 
     
-    const paymentExpiresOnSeconds = Math.floor(Date.now() / 1000) + 10 * 60;  //10 minute 
-    
-    //==================================
-    //⚠️⚠️⚠️⚠️⚠️ : MAKE SURE STRIPE EXPIRY TIME (10 MINUTE ) SAME AS BELOW INNGEST EXPIRY TIME(10MINUTE) 
-    // ELSE USER MAKE THE PAYMENT ON 11TH MINUTE, THERE WILL BE NO BOOKING ID DOCUMENT , PAYMENT GOES UNRECORDED
-//==================================
-
-    // THERE
-    //“Take the current time (in seconds since 1970), then add 1800 seconds (30 minutes).” 
-    //30 * 60 = 1800 seconds
-    const paymentExpiresOnDate = new Date(paymentExpiresOnSeconds * 1000);
-    //* 1000  -->  seconds * 1000 -> milliseconds 
 
 
 
-    console.log('paymentExpiresOn',paymentExpiresOnSeconds);
+    console.log('paymentExpiresOn',stripePaymentExpiresOnSeconds);
     console.log('paymentExpiresOnDate',paymentExpiresOnDate);
 
     const paymentCustomUniqueId = uuidv4();
 
-    const paymentAmount = (showData.showPrice * selectedSeats.length) * 100; //*100 is required 
+    const  payAmount = showData.showPrice * selectedSeats.length
+    const stripePaymentAmount = payAmount * 100; //*100 is required (convert to paise, OR CENTS IN STRIPE , PAISE FOR INR)
 
 
     const stripeSession = await stripeInstance.checkout.sessions.create({
       success_url: `${origin}/loading/?next=/user/dashboard/bookings`,
       cancel_url: `${origin}/user/dashboard/bookings`,
       mode: "payment",
-      expires_at: paymentExpiresOnSeconds,
+      expires_at: stripePaymentExpiresOnSeconds,
       metadata: {
         bookingId: booking[0]._id.toString(),
         paymentCustomUniqueId,
@@ -156,7 +164,7 @@ export async function CREATE_BOOKING_CONTROLLER(
         {
           price_data: {
             currency: "usd",
-            unit_amount:paymentAmount,
+            unit_amount:stripePaymentAmount,
             product_data: productData,
           },
           quantity: 1,
@@ -178,7 +186,7 @@ export async function CREATE_BOOKING_CONTROLLER(
       paymentExpiresOn: paymentExpiresOnDate,
     //   paymentIntentId: stripeSession.payment_intent as string, initially payment_intent will be null
       checkoutSessionId: stripeSession.id,
-      amount: paymentAmount,
+      amount: payAmount,
       currency: "usd",
       status: "pending",
     },

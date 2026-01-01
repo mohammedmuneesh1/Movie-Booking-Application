@@ -23,7 +23,7 @@ export const stripeWebHooks = async (request:Request,response:Response)=>{
     try {
         event = stripeInstance.webhooks.constructEvent(request.body,sig as string,process.env.STRIPE_WEBHOOK_SECRET as string); //2
     } catch (error) {
-        return ResponseHandler(response,200,false,null,`Stripe webhook error. ${error instanceof Error ? error.message: error}`);
+        return ResponseHandler(response,500,false,null,`Stripe webhook error. ${error instanceof Error ? error.message: error}`);
     }
 
 
@@ -46,8 +46,58 @@ export const stripeWebHooks = async (request:Request,response:Response)=>{
                 
                 const session = sessionList.data[0];
                 const {bookingId,paymentCustomUniqueId,userId } = session?.metadata as {bookingId:string,paymentCustomUniqueId:string,userId:string};
+
                 if(!bookingId || !paymentCustomUniqueId || !userId) return ResponseHandler(response,200,false,null,'stripe webhook error:Booking id not found || paymentCustomUniqueId not found || userId not found.');
 
+                const booking = await BookingModel.findById(bookingId);
+
+
+ //IF NOT BOOKING FOUND , DONT TRIGGER REFUND INSTEAD WAIT FOR USER TO APPRAOCH YOU  AND CHECK STRIPE RAW EVENT ON PAYMENT MODEL TO RECLAIM REFUND(DO THE REFUND MANUALLY )
+
+                if(!booking){
+ // 🚨 serious data integrity issue
+// DO NOT auto-refund silently
+await PaymentModel.findOneAndUpdate(
+  { paymentCustomUniqueId },
+  {
+    status: "failed",
+    rawEvent: event,
+  }
+);
+
+// Log + alert, let admin investigate
+return ResponseHandler(response,500,false,null,"Booking not found for successful payment");
+                    
+
+                }
+                  //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
+
+
+
+
+
+                if (booking.status === "EXPIRED" || booking.status === "CANCELLED") {
+
+
+     // ✅ Legit late payment → refund
+    await stripeInstance.refunds.create({
+      payment_intent: session?.payment_intent as string,
+    });
+
+
+
+    await PaymentModel.findOneAndUpdate(
+      { paymentCustomUniqueId },
+      {
+        status: "refunded",
+        isPaid: false,
+        paymentIntentId: session?.payment_intent,
+      }
+    );
+
+    return ResponseHandler(response,200,false,null,'Booking Expired. Payment Refunded.');
+           }
+                //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
                 const payment = await PaymentModel.findOneAndUpdate(
                     {
                     paymentCustomUniqueId:paymentCustomUniqueId,
@@ -61,7 +111,6 @@ export const stripeWebHooks = async (request:Request,response:Response)=>{
                     new:true,
                 }
                 );
-
                 break;
             }
     

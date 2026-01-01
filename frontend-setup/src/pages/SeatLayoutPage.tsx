@@ -142,7 +142,7 @@ const  SeatLayoutPage = () => {
       
     } catch (error) {
        console.error("error FS",error instanceof Error ? error.message : error);
-       return toast.error(" Technical Issue in booking tickets.Please refresh the page and try again later.");
+       return toast.error(" Technical Issue in booking tickets.Please refresh the page and try again later...");
     }
     finally{
       setCheckoutLoading(false);

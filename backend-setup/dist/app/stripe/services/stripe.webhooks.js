@@ -17,7 +17,7 @@ export const stripeWebHooks = async (request, response) => {
         event = stripeInstance.webhooks.constructEvent(request.body, sig, process.env.STRIPE_WEBHOOK_SECRET); //2
     }
     catch (error) {
-        return ResponseHandler(response, 200, false, null, `Stripe webhook error. ${error instanceof Error ? error.message : error}`);
+        return ResponseHandler(response, 500, false, null, `Stripe webhook error. ${error instanceof Error ? error.message : error}`);
     }
     try {
         switch (event.type) {
@@ -34,6 +34,32 @@ export const stripeWebHooks = async (request, response) => {
                 const { bookingId, paymentCustomUniqueId, userId } = session?.metadata;
                 if (!bookingId || !paymentCustomUniqueId || !userId)
                     return ResponseHandler(response, 200, false, null, 'stripe webhook error:Booking id not found || paymentCustomUniqueId not found || userId not found.');
+                const booking = await BookingModel.findById(bookingId);
+                //IF NOT BOOKING FOUND , DONT TRIGGER REFUND INSTEAD WAIT FOR USER TO APPRAOCH YOU  AND CHECK STRIPE RAW EVENT ON PAYMENT MODEL TO RECLAIM REFUND(DO THE REFUND MANUALLY )
+                if (!booking) {
+                    // 🚨 serious data integrity issue
+                    // DO NOT auto-refund silently
+                    await PaymentModel.findOneAndUpdate({ paymentCustomUniqueId }, {
+                        status: "failed",
+                        rawEvent: event,
+                    });
+                    // Log + alert, let admin investigate
+                    return ResponseHandler(response, 500, false, null, "Booking not found for successful payment");
+                }
+                //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
+                if (booking.status === "EXPIRED" || booking.status === "CANCELLED") {
+                    // ✅ Legit late payment → refund
+                    await stripeInstance.refunds.create({
+                        payment_intent: session?.payment_intent,
+                    });
+                    await PaymentModel.findOneAndUpdate({ paymentCustomUniqueId }, {
+                        status: "refunded",
+                        isPaid: false,
+                        paymentIntentId: session?.payment_intent,
+                    });
+                    return ResponseHandler(response, 200, false, null, 'Booking Expired. Payment Refunded.');
+                }
+                //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
                 const payment = await PaymentModel.findOneAndUpdate({
                     paymentCustomUniqueId: paymentCustomUniqueId,
                     userId: userId,

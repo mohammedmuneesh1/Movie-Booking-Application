@@ -32,7 +32,30 @@ You've identified a critical race condition:
 
 
 
+ ///issue again stripe needed 30 minute minimum epxiration timing 
 
+ IF booking.status === "EXPIRED"
+  → REFUND immediately
+  → log late payment
+ELSE
+  → confirm booking
+  → status = "CONFIRMED"
+
+
+
+User stays on Stripe page
+Booking expires at 10 min
+User pays at 11 min
+
+✅ What SHOULD happen
+
+Payment succeeds (Stripe allows it)
+Webhook fires
+Backend sees:
+booking.status === "EXPIRED"
+You refund automatically
+Show user:
+“Payment received too late. Seats were released. Amount refunded.”
 
 
 

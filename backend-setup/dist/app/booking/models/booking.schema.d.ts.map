@@ -1,1 +1,1 @@
-{"version":3,"file":"booking.schema.d.ts","sourceRoot":"","sources":["../../../../src/app/booking/models/booking.schema.ts"],"names":[],"mappings":"AAAA,OAAO,QAA6B,MAAM,UAAU,CAAC;AAsCrD,QAAA,MAAM,YAAY,gDAA+E,CAAC;AAClG,eAAe,YAAY,CAAC"}
+{"version":3,"file":"booking.schema.d.ts","sourceRoot":"","sources":["../../../../src/app/booking/models/booking.schema.ts"],"names":[],"mappings":"AAAA,OAAO,QAA6B,MAAM,UAAU,CAAC;AA8CrD,QAAA,MAAM,YAAY,gDAC6D,CAAC;AAChF,eAAe,YAAY,CAAC"}

@@ -671,6 +671,15 @@ You must have the CLI. The inngest npm package alone is NOT enough.
   
  STEP-5: THEN ON TERMINAL -->  npm install -g inngest-cli
 
+
+npx inngest-cli dev
+npx inngest-cli dev
+npx inngest-cli dev
+npx inngest-cli dev
+npx inngest-cli dev
+npx inngest-cli dev
+npx inngest-cli dev
+
     - http://127.0.0.1:8288 (http://localhost:8288)
     THIS WILL BE INNGEST LOCALLY DASHBOARD URL 
 
