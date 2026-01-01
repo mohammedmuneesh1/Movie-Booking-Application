@@ -80,16 +80,15 @@ export const stripeWebHooks = async (request, response) => {
                 booking.status = "CONFIRMED";
                 await booking.save();
                 // SEND CONFIRMATION EMAIL 
-                try {
-                    await inngest.send({
-                        name: "app.bookingConfirmationEemail",
-                        data: { bookingId },
-                    });
-                }
-                catch (inngestError) {
-                    // Log but don't fail the request - booking is already saved
-                    console.error("Inngest send failed:", inngestError);
-                }
+                // try {
+                //   await inngest.send({
+                //     name: "app.bookingConfirmationEemail",
+                //     data: { bookingId },
+                //   });
+                // } catch (inngestError) {
+                //   // Log but don't fail the request - booking is already saved
+                //   console.error("Inngest send failed:", inngestError);
+                // }
                 break;
             }
             default:
