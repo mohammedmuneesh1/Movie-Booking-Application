@@ -1,16 +1,35 @@
 import mongoose from "mongoose";
+const DB_URL = process.env.DB_URL;
+if (!DB_URL) {
+    throw new Error("❌ DB_URL is not defined");
+}
+// Global cache (VERY IMPORTANT)
+let cached = global.mongoose;
+if (!cached) {
+    cached = global.mongoose = {
+        conn: null,
+        promise: null,
+    };
+}
 const connectDB = async () => {
-    try {
-        // console.log('process.env.DB_URL',process.env.DB_URL)
-        await mongoose.connect(process.env.DB_URL, {
-            maxPoolSize: 50, // Maximum number of connections in the pool
-            serverSelectionTimeoutMS: 10000, // Timeout after 10s instead of 30s
-            socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
+    if (cached.conn) {
+        return cached.conn;
+    }
+    if (!cached.promise) {
+        cached.promise = mongoose.connect(DB_URL, {
+            bufferCommands: false,
+            maxPoolSize: 5, // serverless-friendly
         });
-        console.log("DB connected");
+    }
+    try {
+        cached.conn = await cached.promise;
+        console.log("✅ MongoDB connected");
+        return cached.conn;
     }
     catch (error) {
-        console.log(error);
+        cached.promise = null;
+        console.error("❌ MongoDB connection failed:", error);
+        throw error;
     }
 };
 export default connectDB;
