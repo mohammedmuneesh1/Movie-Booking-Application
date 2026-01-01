@@ -22,6 +22,7 @@ import ClientDashboardPage from './components/(client)/ClientDashboardPage'
 import UserProfilePage from './pages/(client)/UserProfilepage'
 import UserSavedMoviesPage from './pages/(client)/userSavedMoviesPage'
 import LoadingPage from './components/LoadingPage'
+import UserMiddleware from './middleware/UserMiddleware'
 
 
 
@@ -61,11 +62,17 @@ function App() {
 </Route>
 
 {/* <Route path="/user/dashboard" element={<AdminMiddleware />}> */}
-<Route path="/user/dashboard" element={<UserSideLayout />}>
+
+
+<Route path="/user/dashboard" element={<UserMiddleware />}>
+
+<Route element={<UserSideLayout />}>
     <Route index element={<ClientDashboardPage />} />
    <Route path="bookings" element={<MyBookingsPage />} />
    <Route path="profile" element={<UserProfilePage />} />
    <Route path="saved-movies" element={<UserSavedMoviesPage />} />
+</Route>
+
 </Route>
 
 

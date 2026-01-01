@@ -132,7 +132,7 @@ max-md:text-lg z-50 flex flex-col md:flex-row
 
       
         <button
-      onClick={() => userInfo?.ia  ?  navigate('/admin') : navigate("/user/bookings")}
+      onClick={() => userInfo?.ia  ?  navigate('/admin') : navigate("/user/dashboard/bookings")}
       className='px-4 py-1 sm:px-7 sm:py-2 bg-primary
       hover:bg-primary-dull transition-all  text-sm
       rounded-full font-medium cursor-pointer text-white

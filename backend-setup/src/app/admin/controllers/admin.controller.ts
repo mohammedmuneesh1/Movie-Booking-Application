@@ -8,6 +8,7 @@ import { GET_ALL_SHOWS_SERVICE } from "../../show/services/show.service.js";
 import { GET_USER_COUNT_SERVICE } from "../../user/services/user.service.js";
 import FavoriteModel from "../../favourite/models/favourite.schema.js";
 import { TOP_10_FAVOURITE_MOVIES_SERVICE } from "../../favourite/services/favourite.service.js";
+import { inngest } from "../../../config/ingest/ingestFunction.js";
 
 
 // /**
@@ -63,4 +64,19 @@ export async function ADMIN_GET_ALL_SHOWS_CONTROLLER (req:AuthenticatedRequest, 
 export async function GET_ALL_BOOKINGS_CONTROLLER(req:AuthenticatedRequest, res:Response){
   const bookingData = await GET_ALL_BOOKINGS_SERVICE();
   return ResponseHandler(res,200,true,bookingData,'Bookings fetched successfully.');
+}
+
+
+
+export async function SEND_EMAIL_TESTING_CONTROLLER(req:AuthenticatedRequest, res:Response):Promise<Response>{
+
+    
+
+      await inngest.send({
+              name: "app.bookingConfirmationEmail",
+              data: { bookingId:"6956b6658307afe0ca8807db" },
+            });
+
+    return ResponseHandler(res,200,true,null,'Email sent successfully.')
+
 }

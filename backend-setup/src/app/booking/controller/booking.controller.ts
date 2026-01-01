@@ -7,7 +7,7 @@ import type { AuthenticatedRequest } from "../../../middlewares/isAuth.js";
 import ResponseHandler from "../../../utils/responseHandler.js";
 import ShowModel from "../../show/models/show.schema.js";
 import BookingModel from "../models/booking.schema.js";
-import { GET_ALL_BOOKINGS_SERVICE } from "../services/booking.service.js";
+import { GET_ALL_BOOKINGS_SERVICE, GET_ALL_USER_BOOKINGS_SERVICE } from "../services/booking.service.js";
 import  stripe from 'stripe';
 import mongoose from "mongoose";
 import PaymentModel from "../../stripe/models/payment.schema.js";
@@ -277,5 +277,11 @@ export async function GET_ALL_OCCUPIED_SEATS_BY_SHOWID(req:AuthenticatedRequest,
 
 export async function GET_ALL_BOOKINGS_CONTROLLER_B1(req:AuthenticatedRequest, res:Response){
   const bookingData = await GET_ALL_BOOKINGS_SERVICE();
+  return ResponseHandler(res,200,true,bookingData,'Bookings fetched successfully.');
+}
+
+export async function GET_ALL_USER_BOOKINGS_CONTROLLER(req:AuthenticatedRequest, res:Response){
+  const userId = req.user?.id;
+  const bookingData = await GET_ALL_USER_BOOKINGS_SERVICE(userId);
   return ResponseHandler(res,200,true,bookingData,'Bookings fetched successfully.');
 }

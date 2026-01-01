@@ -23,6 +23,24 @@ export async function GET_ALL_BOOKINGS_SERVICE() {
     return bookings;
     
 }
+export async function GET_ALL_USER_BOOKINGS_SERVICE(userId:string) {
+    const bookings = await BookingModel.find({
+        user:userId
+    }).populate([
+        {
+            path:'show',
+            populate:[{
+                path:'movieRef',
+                model:'Movie',
+            }]
+        },{
+            path:'paymentId',
+            model:'Payment',
+        }
+    ]).sort({createdAt:-1}); 
+    return bookings;
+    
+}
 
 
 

@@ -19,7 +19,7 @@ const  MyBookingsPage = () => {
   const getMyBookings = async ()=>{
 
     try {
-      const res = await axiosInstance.get('/api/bookings/all/bookings');
+      const res = await axiosInstance.get('/api/bookings/user/bookings');
       console.log('res',res?.data?.data);
       if(res?.data?.success){
         return setBookings(res?.data?.data);

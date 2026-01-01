@@ -816,3 +816,8 @@ Once deployed (not using `inngest-cli dev`):
    - Event triggered (inngest.send())
    - Scheduled function runs
    - Step executes  
+
+⚠️⚠️⚠️⚠️  IMP , WHEN EVER YOU ADD/EDIT THE FUNCTION ON INNGEST, SYNC THE APP ON THE INNGEST , IT'S A MUST 
+
+
+

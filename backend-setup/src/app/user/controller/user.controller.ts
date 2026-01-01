@@ -33,6 +33,9 @@ export const USER_LOGIN_FN = async (req: Request, rs: Response) => {
 
   const { email, name, picture: image , verified_email } = googleUserRes.data;
 
+
+  console.log('googleUserRes.data',googleUserRes.data)
+
   if (!email) {
     return ResponseHandler(rs, 400, false, null, "Google account has no email");
   }
@@ -40,6 +43,7 @@ export const USER_LOGIN_FN = async (req: Request, rs: Response) => {
   //    const {email,name,image} = req.body;
 
   let isUserExist = await UserModel.findOne({ email });
+  console.log('isUserExist',isUserExist);
 
   if (!isUserExist) {
     isUserExist = await UserModel.create({

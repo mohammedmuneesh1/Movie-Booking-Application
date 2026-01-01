@@ -29,7 +29,7 @@ const googleLogin = useGoogleLogin({
             navigate("/admin");
         }
         else{
-        navigate("/user/bookings");
+        navigate("/user/dashboard/bookings");
         }
         toast.success("Welcome Back");
     }
