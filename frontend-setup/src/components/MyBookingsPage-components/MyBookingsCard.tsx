@@ -66,8 +66,8 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
       Payment {data.status.toLowerCase()}
     </span>
   </div>
-) : data?.paymentId?.paymentExpiresOn &&
-  !timeExpirationCheck(data.paymentId.paymentExpiresOn) ? (
+) : data?.expiresAt &&
+  !timeExpirationCheck(data?.expiresAt) ? (
   <Link
     to={data.paymentId.paymentLink}
     className="btnCommonDesign text-sm rounded-full!"
@@ -77,7 +77,7 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
 ) : (
   <div className="flex items-center gap-2 px-4 py-2 rounded-full
     bg-red-500/10 text-red-500 border border-red-500/20">
-    <span className="text-sm font-medium capitalize">Payment expired</span>
+    <span className="text-sm font-medium capitalize">Booking expired</span>
   </div>
 )}
 
