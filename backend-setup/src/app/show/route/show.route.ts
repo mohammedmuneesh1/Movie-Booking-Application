@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.route('/now-playing').get(tryCatch(GET_NOW_PLAYING_MOVIES_CONTROLLER));
 router.route('/add-show').post(isAuth,tryCatch(ADD_NEW_MOVIE_SHOW_CONTROLLER));
-router.route('/all').get(isAuth,tryCatch(GET_ALL_SHOWS_CONTROLLER));
-router.route('/unique-shows').get(isAuth,tryCatch(GET_UNIQUE_SHOWS_CONTROLLER));
+router.route('/all').get(tryCatch(GET_ALL_SHOWS_CONTROLLER));
+router.route('/unique-shows').get(tryCatch(GET_UNIQUE_SHOWS_CONTROLLER));
 router.route('/:movieId').get(tryCatch(GET_SHOWS_BASED_ON_MOVIE_ID_CONTROLLER));
 
 
