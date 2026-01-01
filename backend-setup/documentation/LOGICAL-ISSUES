@@ -69,4 +69,88 @@ MAKE THE STRIPE EXPIRY 10 MINUTE , SAME TIME MAKE INGEST EXPIRY 10 MINUTES
 
 
 
+booking schema 
+
+
+
+    status: {
+      type: String,
+      enum: ["PENDING_PAYMENT", "CONFIRMED", "EXPIRED", "CANCELLED"],
+      default: "PENDING_PAYMENT",
+    },
+
+    expiresAt: {
+      type: Date,
+      required: true,
+    },
+
+
+
+the logic working on webhook 
+
+
+if expired , then iniate spot refunt 
+
+
+
+
+
+ //IF NOT BOOKING FOUND , DONT TRIGGER REFUND INSTEAD WAIT FOR USER TO APPRAOCH YOU  AND CHECK STRIPE RAW EVENT ON PAYMENT MODEL TO RECLAIM REFUND(DO THE REFUND MANUALLY )
+
+
+                  //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
+
+
+
+
+
+                if (booking.status === "EXPIRED" || booking.status === "CANCELLED") {
+
+
+     // ✅ Legit late payment → refund
+    await stripeInstance.refunds.create({
+      payment_intent: session?.payment_intent as string,
+    });
+
+
+
+    await PaymentModel.findOneAndUpdate(
+      { paymentCustomUniqueId },
+      {
+        status: "refunded",
+        isPaid: false,
+        paymentIntentId: session?.payment_intent,
+      }
+    );
+
+    return ResponseHandler(response,200,false,null,'Booking Expired. Payment Refunded.');
+           }
+                //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
+                const payment = await PaymentModel.findOneAndUpdate(
+                    {
+                    paymentCustomUniqueId:paymentCustomUniqueId,
+                    userId:userId,
+                },
+                { 
+                    status: "succeeded",
+                    isPaid: true,
+                      paymentIntentId:session?.payment_intent as string, 
+                },{
+                    new:true,
+                }
+                );
+                break;
+            }
+    
+             default:
+                console.log(`Unhandled event type ${event.type}`);
+                break;    
+        }
+        return ResponseHandler(response,200,true,{received:true},'stripe webhook success');
+    } catch (error) {
+        console.error('`Webhook processing error:',error);
+        return ResponseHandler(response,200,false,null,'stripe webhook processing error');
+    }
+}
+
 

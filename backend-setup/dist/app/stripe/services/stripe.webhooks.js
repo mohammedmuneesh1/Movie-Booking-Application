@@ -59,7 +59,7 @@ export const stripeWebHooks = async (request, response) => {
                     });
                     return ResponseHandler(response, 200, false, null, 'Booking Expired. Payment Refunded.');
                 }
-                //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
+                //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND END
                 const payment = await PaymentModel.findOneAndUpdate({
                     paymentCustomUniqueId: paymentCustomUniqueId,
                     userId: userId,
@@ -70,6 +70,8 @@ export const stripeWebHooks = async (request, response) => {
                 }, {
                     new: true,
                 });
+                booking.status = "CONFIRMED";
+                await booking.save();
                 break;
             }
             default:

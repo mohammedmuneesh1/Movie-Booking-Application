@@ -97,7 +97,10 @@ return ResponseHandler(response,500,false,null,"Booking not found for successful
 
     return ResponseHandler(response,200,false,null,'Booking Expired. Payment Refunded.');
            }
-                //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
+
+                //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND END
+
+
                 const payment = await PaymentModel.findOneAndUpdate(
                     {
                     paymentCustomUniqueId:paymentCustomUniqueId,
@@ -111,6 +114,10 @@ return ResponseHandler(response,500,false,null,"Booking not found for successful
                     new:true,
                 }
                 );
+
+                booking.status = "CONFIRMED";
+                await booking.save();
+
                 break;
             }
     
