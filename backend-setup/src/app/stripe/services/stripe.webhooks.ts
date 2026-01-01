@@ -5,6 +5,7 @@ import BookingModel from "../../booking/models/booking.schema.js";
 import PaymentModel from "../models/payment.schema.js";
 import mongoose from "mongoose";
 import connectDB from "../../../config/db.js";
+import { inngest } from "../../../config/ingest/ingestFunction.js";
 
 export const stripeWebHooks = async (request: Request, response: Response) => {
   console.log("stripeWebHooks called");
@@ -68,7 +69,7 @@ export const stripeWebHooks = async (request: Request, response: Response) => {
         const booking = await BookingModel.findById(bookingId);
 
         //IF NOT BOOKING FOUND , DONT TRIGGER REFUND INSTEAD WAIT FOR USER TO APPRAOCH YOU  AND CHECK STRIPE RAW EVENT ON PAYMENT MODEL TO RECLAIM REFUND(DO THE REFUND MANUALLY )
-
+         //⚠️⚠️⚠️ SCENARIO-1 : IF BOOKING NOT FOUND(0.1% CHANCE FOR HAPPENING, BUT WHAT IF ?) ⚠️⚠️⚠️
         if (!booking) {
           // 🚨 serious data integrity issue
           // DO NOT auto-refund silently
@@ -91,6 +92,7 @@ export const stripeWebHooks = async (request: Request, response: Response) => {
         }
         //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
 
+         // ⚠️⚠️⚠️ SCENARIO-2: IF PAYMENT IS EXPIRED ⚠️⚠️⚠️
         if (booking.status === "EXPIRED" || booking.status === "CANCELLED") {
           // ✅ Legit late payment → refund
 
@@ -137,6 +139,19 @@ export const stripeWebHooks = async (request: Request, response: Response) => {
 
         booking.status = "CONFIRMED";
         await booking.save();
+
+        // SEND CONFIRMATION EMAIL 
+        
+          try {
+            await inngest.send({
+              name: "app.bookingConfirmationEemail",
+              data: { bookingId },
+            });
+          } catch (inngestError) {
+            // Log but don't fail the request - booking is already saved
+            console.error("Inngest send failed:", inngestError);
+          }
+
 
         break;
       }

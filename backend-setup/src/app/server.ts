@@ -12,7 +12,7 @@ import AdminRouter from './admin/routes/admin.route.js';
 import FavourtieRouter from './favourite/route/favourite.route.js';
 import { stripeWebHooks } from './stripe/services/stripe.webhooks.js';
 import {serve} from 'inngest/express'
-import { inngest, releaseSeatsAndDeleteBookings } from '../config/ingest/ingestFunction.js';
+import { inngest, releaseSeatsAndDeleteBookings, sendBookingConfirmationEmail } from '../config/ingest/ingestFunction.js';
 
 dotenv.config();
 
@@ -87,7 +87,7 @@ app.use(
   '/api/inngest',
   serve({
     client: inngest,
-    functions: [releaseSeatsAndDeleteBookings],
+    functions: [releaseSeatsAndDeleteBookings,sendBookingConfirmationEmail],
     // signingKey: process.env.INNGEST_SIGNING_KEY as string,
   })
 );

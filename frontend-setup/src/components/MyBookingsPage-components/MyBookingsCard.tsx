@@ -19,8 +19,13 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
 
     return(
         <div
-           className="flex flex-col md:flex-row justify-between bg-primary/8 border border-primary/20 rounded-lg mt-4 p-2 max-w-full w-full"
+           className=" bg-primary/8 border border-primary/20 rounded-lg mt-4 p-2 max-w-full w-full"
           > 
+
+          <div 
+          className="flex flex-col md:flex-row justify-between"
+          >
+
 
 
           
@@ -63,7 +68,16 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
   <div className="flex items-center gap-2 px-4 py-2 rounded-full
     bg-red-500/10 text-red-500 border border-red-500/20 capitalize">
     <span className="text-sm font-medium">
-      Payment {data.status.toLowerCase()}
+      Booking  {data.status.toLowerCase()}
+      {
+        data?.paymentId?.status === "refunded" && (
+          <span className="text-sm font-medium">
+            {" "}
+            (Payment Refunded Intiated)
+          </span>
+        )
+      }
+
     </span>
   </div>
 ) : data?.expiresAt &&
@@ -101,8 +115,25 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
                 </span>
             </p>
         </div>
+
+        
     </div>
     {/* PRICE + TOTAL TICKETS + SEAT NUMBER END */}
+
+
+       
+          </div>
+
+      {
+        data?.paymentId?.status === "refunded" && (
+          <h4 className="select-none text-sm font-medium p-2 rounded-lg bg-primary/10 border border-zinc-400/20 hover:border-zinc-400/60  hover:bg-primary/40 duration-300 ease-in mt-4! text-center ">
+            {" "}
+            Your booking expired before payment completed. Your payment has been refunded and will appear in your account within 5-10 business days.
+          </h4>
+        )
+      }
+
+
 
           </div>
     )
