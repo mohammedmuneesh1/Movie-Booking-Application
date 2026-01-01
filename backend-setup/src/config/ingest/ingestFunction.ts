@@ -49,7 +49,7 @@ export const releaseSeatsAndDeleteBookings = inngest.createFunction(
     console.log("Inngest triggered: releaseSeatsAndDeleteBookings");
 
     // ⏳ Wait 10 minutes (CORRECT WAY)
-    await step.sleep("wait-for-10-minutes", "1m");
+    await step.sleep("wait-for-10-minutes", "10m");
 
     //"10m" → 10 minutes, "1h" → 1 hour, "30s" → 30 seconds , "1d" → 1 day
 

@@ -10,6 +10,8 @@ import BookingRouter from './booking/routes/booking.route.js';
 import AdminRouter from './admin/routes/admin.route.js';
 import FavourtieRouter from './favourite/route/favourite.route.js';
 import { stripeWebHooks } from './stripe/services/stripe.webhooks.js';
+import { serve } from 'inngest/express';
+import { inngest, releaseSeatsAndDeleteBookings } from '../config/ingest/ingestFunction.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
@@ -17,6 +19,10 @@ if (!PORT) {
     throw new Error('PORT is not defined');
 }
 app.use(cors());
+//big question: if i place origin on cors, does it interrupt stripe webhooks? the origin set https://hello.com , does it effect webhooks? 
+//answer: no, it doesn't interrupt stripe webhooks.
+//CORS headers are only checked by browsers.
+//  Since Stripe's webhook is a server-to-server HTTP request (not from a browser), CORS restrictions don't affect it.
 //stripe webhooks route 
 // ✅ Stripe webhook MUST come before express.json
 app.use('/api/stripe', express.raw({ type: 'application/json' }), stripeWebHooks);
@@ -35,9 +41,19 @@ app.use(express.json());
 // };
 //So yes — it converts JSON text into a JS object.
 app.use((req, res, next) => {
-    console.log(`[${req.method}] ${req.originalUrl},`);
+    const time = new Date().toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        hour12: false,
+    });
+    console.log(`[${time}] [${req.method}] ${req.originalUrl}`);
     next();
 });
+// ✅ ADD INNGEST ENDPOINT HERE (BEFORE YOUR OTHER ROUTES)
+app.use('/api/inngest', serve({
+    client: inngest,
+    functions: [releaseSeatsAndDeleteBookings],
+    // signingKey: process.env.INNGEST_SIGNING_KEY as string,
+}));
 app.use('/api/users', UserRouter);
 app.use('/api/show', showRouter);
 app.use('/api/bookings', BookingRouter);

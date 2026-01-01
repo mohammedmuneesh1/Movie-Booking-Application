@@ -77,6 +77,7 @@ app.use((req, res, next) => {
     hour12: false,
   });
   console.log(`[${time}] [${req.method}] ${req.originalUrl}`);
+
   next();
 });
 

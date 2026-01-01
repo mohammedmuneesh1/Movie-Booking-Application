@@ -5,6 +5,10 @@ const paymentSchema = new mongoose.Schema({
         ref: "Booking",
         required: true,
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
     paymentLink: {
         type: String,
         required: true,

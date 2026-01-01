@@ -31,12 +31,12 @@ export const stripeWebHooks = async (request, response) => {
                 // paymentIntent.id → "pi_123"
                 // session.payment_intent → "pi_123"
                 const session = sessionList.data[0];
-                const { bookingId, paymentCustomUniqueId } = session?.metadata;
-                if (!bookingId || !paymentCustomUniqueId)
-                    return ResponseHandler(response, 200, false, null, 'stripe webhook error:Booking id not found.');
+                const { bookingId, paymentCustomUniqueId, userId } = session?.metadata;
+                if (!bookingId || !paymentCustomUniqueId || !userId)
+                    return ResponseHandler(response, 200, false, null, 'stripe webhook error:Booking id not found || paymentCustomUniqueId not found || userId not found.');
                 const payment = await PaymentModel.findOneAndUpdate({
-                    booking: bookingId,
-                    paymentCustomUniqueId: paymentCustomUniqueId
+                    paymentCustomUniqueId: paymentCustomUniqueId,
+                    userId: userId,
                 }, {
                     status: "succeeded",
                     isPaid: true,
