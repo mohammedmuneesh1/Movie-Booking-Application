@@ -37,6 +37,15 @@ const paymentSchema = new mongoose.Schema({
     rawEvent: {
         type: mongoose.Schema.Types.Mixed,
     },
+    refundMessage: {
+        type: String,
+    },
+    refundId: {
+        type: String,
+    },
+    refundInitiatedAt: {
+        type: Date,
+    },
     isPaid: {
         type: Boolean,
         default: false

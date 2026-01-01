@@ -15,7 +15,11 @@ interface IPayment extends Document {
   isPaid: boolean;
   currency: string;
   status: "pending" | "succeeded" | "failed" | "refunded";
+  refundMessage?:string;
+  refundId?:string;
   rawEvent?: mongoose.Schema.Types.Mixed;
+  refundInitiatedAt?:Date,
+
 }
 
 
@@ -59,7 +63,17 @@ const paymentSchema = new mongoose.Schema(
     rawEvent: {
   type: mongoose.Schema.Types.Mixed,
 },
-    isPaid:{
+refundMessage:{
+  type:String,
+},
+refundId:{
+  type:String,
+},
+refundInitiatedAt : {
+    type:Date,
+},
+
+  isPaid:{
             type:Boolean,
             default:false
     },
@@ -71,7 +85,6 @@ const paymentSchema = new mongoose.Schema(
         required:true
     },
     currency: String,
-
     status: {
       type: String,
       enum: ["pending", "succeeded", "failed", "refunded"],
