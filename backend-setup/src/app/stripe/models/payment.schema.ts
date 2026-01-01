@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 
 interface IPayment extends Document {
   booking: mongoose.Types.ObjectId;
+  userId?:string;
   paymentLink: string;
   provider: "stripe";
   paymentIntentId?: string;
@@ -25,6 +26,10 @@ const paymentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Booking",
       required: true,
+    },
+    userId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     },
     paymentLink:{
         type:String,

@@ -1,0 +1,49 @@
+
+
+
+
+QUESTION 
+
+
+I HAVE A GENUINE DOUBT, IF A USER GET INTO THE MOVIE BOOKING AND HE RESERVED THE SEAT,
+ AND THE MOMENT WE TURN ON INNGEST FOR AUTO DELETION FOR THAT BOOKINGID ,   
+ AND USER REMAIN ON THE PAYMENT PAGE WITHOUT PAYING, THEN AFTER 10 MINUTE , 
+ THE BOOKING ID DOCUMENT WILL BE DELETED AND SEAT WILL BE RELIVED BUT STILL 
+ THE USER ON THE PAYMENT PAGE STRIPE . SO ON THE 11TH MINUTE , IF HE TRY TO MAKE
+  THE PAYMENT THE PAYMENT WILL DONE BUT NO BOOKING ID OR DOCUMENT, WILL REMAIN . SO HOW TO SOLVE
+   THIS ISSUE?  BY MAKING THE EXPIRY TIME OF STRIPE EXACTLY AS OF DELETING DOCUMENT? 10 MINUTE?
+    CURRENCTLY STRIPE PAYMENT TIME IS 30 MINUTE FOR EXPIRY SO SHOULD I MAKE IT TO 10 MINUTE
+     FOR STIPE ?
+
+Excellent Question! This is a Real Problem! 🚨
+You've identified a critical race condition:
+
+
+
+
+
+1) Timeline: 
+0:00  → User books seats
+0:01  → Stripe checkout created (expires in 30 min)
+0:01  → Inngest function scheduled (deletes in 10 min)
+10:00 → Inngest deletes booking + releases seats ❌
+11:00 → User pays on Stripe ✅
+       → Payment succeeds but no booking exists! 💥
+
+
+
+
+
+
+
+
+SOLUTIOHN 
+
+Option 1: Make Stripe Expire at Same Time as Inngest (Recommended) ✅
+
+
+MAKE THE STRIPE EXPIRY 10 MINUTE , SAME TIME MAKE INGEST EXPIRY 10 MINUTES 
+
+
+
+

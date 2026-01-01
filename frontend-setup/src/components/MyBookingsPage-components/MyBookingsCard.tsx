@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { isoDateTimeFormatForCountry } from "../../lib/isoTimeFormat";
 import { timeFormat } from "../../lib/timeFormat";
+import { timeExpirationCheck } from "../../lib/timExpirationCheck";
 
 
 
@@ -14,7 +15,7 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
       const imageBaseUrl = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
 
       console.log('imge',data);
-      
+
 
     return(
         <div
@@ -52,13 +53,39 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
         {/* PRICE + PAY NOW BUTTON START */}  
          <div className="flex items-center gap-4">
             <p className="text-2xl font-semibold mb-3">{currency} {data?.paymentId?.amount }</p>
+
             {!data?.paymentId?.isPaid && (
+                data?.paymentId?.paymentExpiresOn && !timeExpirationCheck(data?.paymentId?.paymentExpiresOn) ? (
                 <Link
                 to={data?.paymentId?.paymentLink}
                 className="btnCommonDesign text-sm rounded-full! ">
                 Pay Now 
             </Link>
-        )}
+                ):(
+<div className="flex items-center gap-2 px-4 py-2
+ rounded-full bg-red-500/10 text-primary border border-red-500/20">
+  <svg
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+  >
+    <path
+     strokeLinecap="round"
+      strokeLinejoin="round"
+       d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+       />
+  </svg>
+  <span className="text-sm font-medium">Payment expired</span>
+</div>
+
+
+                ))}
+
+
+
+
         </div>
         {/* PRICE + PAY NOW BUTTON END */}  
         <div className="tex-sm leading-5 text-sm" >

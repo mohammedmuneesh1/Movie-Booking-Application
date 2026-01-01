@@ -12,6 +12,7 @@ import  stripe from 'stripe';
 import mongoose from "mongoose";
 import PaymentModel from "../../stripe/models/payment.schema.js";
 import { v4 as uuidv4 } from "uuid";
+import { inngest } from "../../../config/ingest/ingestFunction.js";
 
 const checkSeatsAvailability = async (showId:string,selectedSeats:string[])=>{
     try {
@@ -49,6 +50,10 @@ export async function CREATE_BOOKING_CONTROLLER(
   res: Response
 ) {
   const userId = req.user?.id;
+
+  if(!userId){
+    return ResponseHandler(res,401,false,null,"Please login first to book tickets");
+  }
   const { showId, selectedSeats } = req.body;
   const { origin } = req.headers;
      //It tells you where the request came from (scheme + domain + port).
@@ -114,21 +119,38 @@ export async function CREATE_BOOKING_CONTROLLER(
 
 
     
-    const paymentExpiresOn = Math.floor(Date.now() / 1000) + 30 * 60;
+    const paymentExpiresOnSeconds = Math.floor(Date.now() / 1000) + 10 * 60;  //10 minute 
+    
+    //==================================
+    //⚠️⚠️⚠️⚠️⚠️ : MAKE SURE STRIPE EXPIRY TIME (10 MINUTE ) SAME AS BELOW INNGEST EXPIRY TIME(10MINUTE) 
+    // ELSE USER MAKE THE PAYMENT ON 11TH MINUTE, THERE WILL BE NO BOOKING ID DOCUMENT , PAYMENT GOES UNRECORDED
+//==================================
+
+    // THERE
+    //“Take the current time (in seconds since 1970), then add 1800 seconds (30 minutes).” 
+    //30 * 60 = 1800 seconds
+    const paymentExpiresOnDate = new Date(paymentExpiresOnSeconds * 1000);
+    //* 1000  -->  seconds * 1000 -> milliseconds 
+
+
+
+    console.log('paymentExpiresOn',paymentExpiresOnSeconds);
+    console.log('paymentExpiresOnDate',paymentExpiresOnDate);
+
     const paymentCustomUniqueId = uuidv4();
 
     const paymentAmount = (showData.showPrice * selectedSeats.length) * 100; //*100 is required 
-    console.log('paymentAmount',paymentAmount);
 
 
     const stripeSession = await stripeInstance.checkout.sessions.create({
       success_url: `${origin}/loading/?next=/user/dashboard/bookings`,
       cancel_url: `${origin}/user/dashboard/bookings`,
       mode: "payment",
-      expires_at: paymentExpiresOn,
+      expires_at: paymentExpiresOnSeconds,
       metadata: {
         bookingId: booking[0]._id.toString(),
         paymentCustomUniqueId,
+        userId,
       },
       line_items: [
         {
@@ -153,7 +175,7 @@ export async function CREATE_BOOKING_CONTROLLER(
       paymentUrl: stripeSession.url,
       paymentCustomUniqueId,
       paymentExpireMinute: "30 M",
-      paymentExpiresOn: paymentExpiresOn,
+      paymentExpiresOn: paymentExpiresOnDate,
     //   paymentIntentId: stripeSession.payment_intent as string, initially payment_intent will be null
       checkoutSessionId: stripeSession.id,
       amount: paymentAmount,
@@ -174,6 +196,18 @@ export async function CREATE_BOOKING_CONTROLLER(
     // ✅ Commit only if EVERYTHING worked
     await mongoSession.commitTransaction();
     mongoSession.endSession();
+
+
+  try {
+    await inngest.send({
+      name: "app.checkpayment",
+      data: { bookingId: booking[0]._id.toString() },
+    });
+  } catch (inngestError) {
+    // Log but don't fail the request - booking is already saved
+    console.error("Inngest send failed:", inngestError);
+  }
+
 
     return ResponseHandler(
       res,
