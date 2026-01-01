@@ -136,12 +136,13 @@ export const stripeWebHooks = async (request: Request, response: Response) => {
             new: true,
           }
         );
+        console.log('payment document',payment);
 
         booking.status = "CONFIRMED";
         await booking.save();
 
         // SEND CONFIRMATION EMAIL 
-        
+
           try {
             await inngest.send({
               name: "app.bookingConfirmationEemail",
