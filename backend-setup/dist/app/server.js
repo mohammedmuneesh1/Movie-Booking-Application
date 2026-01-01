@@ -12,6 +12,7 @@ import FavourtieRouter from './favourite/route/favourite.route.js';
 import { stripeWebHooks } from './stripe/services/stripe.webhooks.js';
 import { serve } from 'inngest/express';
 import { inngest, releaseSeatsAndDeleteBookings, sendBookingConfirmationEmail } from '../config/ingest/ingestFunction.js';
+import { ensureDBConnection } from '../config/ensureDBConnection.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
@@ -19,6 +20,9 @@ if (!PORT) {
     throw new Error('PORT is not defined');
 }
 app.use(cors());
+if (process.env.NODE_ENV === 'production') {
+    app.use(ensureDBConnection);
+}
 //big question: if i place origin on cors, does it interrupt stripe webhooks? the origin set https://hello.com , does it effect webhooks? 
 //answer: no, it doesn't interrupt stripe webhooks.
 //CORS headers are only checked by browsers.

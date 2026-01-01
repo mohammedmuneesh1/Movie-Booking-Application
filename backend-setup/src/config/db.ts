@@ -27,12 +27,12 @@ const connectDB = async () => {
       maxPoolSize: 5, // serverless-friendly
     });
   }
-
   try {
     cached.conn = await cached.promise;
     console.log("✅ MongoDB connected");
     return cached.conn;
-  } catch (error) {
+  } 
+  catch (error) {
     cached.promise = null;
     console.error("❌ MongoDB connection failed:", error);
     throw error;
