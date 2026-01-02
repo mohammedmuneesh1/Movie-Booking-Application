@@ -161,7 +161,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   const handleSave = () => {
     // TODO: API call
-    console.log({ phone, location });
+    // console.log({ phone, location });
 
     onClose();
   };

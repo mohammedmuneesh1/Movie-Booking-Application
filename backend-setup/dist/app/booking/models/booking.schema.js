@@ -18,6 +18,16 @@ const bookingSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
+    ispersonalEmailReminderSent: {
+        type: Boolean,
+        default: false
+    },
+    personalEmailReminderSentAt: {
+        type: Date,
+    },
+    personalEmailRminderScheduledFor: {
+        type: Date
+    },
     show: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Show",

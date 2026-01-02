@@ -29,7 +29,7 @@ const connectDB = async () => {
   }
   try {
     cached.conn = await cached.promise;
-    console.log("✅ MongoDB connected");
+    console.info("✅ MongoDB connected");
     return cached.conn;
   } 
   catch (error) {

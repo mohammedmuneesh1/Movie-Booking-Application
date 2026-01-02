@@ -1,4 +1,3 @@
-import React from 'react'
 import { Outlet } from 'react-router-dom'
 import ClientSideBar from '../components/(client)/ClientSideBar'
 import ClientNavBar from '../components/(client)/ClientNavBar'

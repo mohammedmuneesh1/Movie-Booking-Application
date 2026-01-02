@@ -8,7 +8,6 @@ const LoadingPage = () => {
 
 const [params] = useSearchParams();
 const nextUrl = params.get("next");
-console.log('nextUrl',nextUrl);
 const navigate = useNavigate();
 
 useEffect(()=> {

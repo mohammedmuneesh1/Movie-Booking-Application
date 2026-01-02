@@ -22,13 +22,11 @@ export const USER_LOGIN_FN = async (req, rs) => {
         },
     });
     const { email, name, picture: image, verified_email } = googleUserRes.data;
-    console.log('googleUserRes.data', googleUserRes.data);
     if (!email) {
         return ResponseHandler(rs, 400, false, null, "Google account has no email");
     }
     //    const {email,name,image} = req.body;
     let isUserExist = await UserModel.findOne({ email });
-    console.log('isUserExist', isUserExist);
     if (!isUserExist) {
         isUserExist = await UserModel.create({
             email, name, image, isEmailVerified: verified_email
@@ -78,7 +76,6 @@ export async function MY_PROFILE(req, res) {
  */
 export async function GET_USER_PROFILE_BY_ID(req, res) {
     const id = req.params.id;
-    console.log("inside user profile", id);
     if (!mongoIdValidate(id)) {
         return ResponseHandler(res, 401, true, null, "User profile fetched successfully");
     }

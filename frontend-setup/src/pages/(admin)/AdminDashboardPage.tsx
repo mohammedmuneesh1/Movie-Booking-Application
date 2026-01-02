@@ -66,7 +66,6 @@ const AdminDashboardPage = ()=>{
     }
 
 
-    console.log('dashboardData?.activeShows',dashboardData?.activeShows);
 
 
 

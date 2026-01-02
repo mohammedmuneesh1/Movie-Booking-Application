@@ -820,4 +820,3 @@ Once deployed (not using `inngest-cli dev`):
 ⚠️⚠️⚠️⚠️  IMP , WHEN EVER YOU ADD/EDIT THE FUNCTION ON INNGEST, SYNC THE APP ON THE INNGEST , IT'S A MUST 
 
 
-

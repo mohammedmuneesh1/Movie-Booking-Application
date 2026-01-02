@@ -141,8 +141,8 @@ export async function CREATE_BOOKING_CONTROLLER(
 
 
 
-    console.log('paymentExpiresOn',stripePaymentExpiresOnSeconds);
-    console.log('paymentExpiresOnDate',paymentExpiresOnDate);
+    // console.log('paymentExpiresOn',stripePaymentExpiresOnSeconds);
+    // console.log('paymentExpiresOnDate',paymentExpiresOnDate);
 
     const paymentCustomUniqueId = uuidv4();
 
@@ -262,7 +262,6 @@ export async function CREATE_BOOKING_CONTROLLER(
 
 export async function GET_ALL_OCCUPIED_SEATS_BY_SHOWID(req:AuthenticatedRequest,res:Response){
     const {showId} = req.params;
-    console.log('request reached here',showId);
     const showData = await ShowModel.findById(showId).populate([
         {
             path:'movieRef',

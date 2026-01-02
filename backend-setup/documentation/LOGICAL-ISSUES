@@ -48,109 +48,61 @@ Booking expires at 10 min
 User pays at 11 min
 
 ✅ What SHOULD happen
-
-Payment succeeds (Stripe allows it)
-Webhook fires
-Backend sees:
-booking.status === "EXPIRED"
-You refund automatically
-Show user:
-“Payment received too late. Seats were released. Amount refunded.”
-
-
-
-
-SOLUTIOHN 
-
-Option 1: Make Stripe Expire at Same Time as Inngest (Recommended) ✅
-
-
-MAKE THE STRIPE EXPIRY 10 MINUTE , SAME TIME MAKE INGEST EXPIRY 10 MINUTES 
-
-
-
-booking schema 
-
-
-
-    status: {
-      type: String,
-      enum: ["PENDING_PAYMENT", "CONFIRMED", "EXPIRED", "CANCELLED"],
-      default: "PENDING_PAYMENT",
-    },
-
-    expiresAt: {
-      type: Date,
-      required: true,
-    },
-
-
-
-the logic working on webhook 
-
-
-if expired , then iniate spot refunt 
+ IF USER DO THE PAYMENT AFTER BOOKING EXPIRED, WE WILL INITIATE A REFUND FROM THE STRIPE WEBHOOK SPOTLY 
+ AND A MESSAGE WILL BE SHOWN THAT 1-5 DAYS THE FUND WILL BE REFUNDED 
 
 
 
 
 
- //IF NOT BOOKING FOUND , DONT TRIGGER REFUND INSTEAD WAIT FOR USER TO APPRAOCH YOU  AND CHECK STRIPE RAW EVENT ON PAYMENT MODEL TO RECLAIM REFUND(DO THE REFUND MANUALLY )
 
+ //ISSUE-2 
 
-                  //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
-
-
-
-
-
-                if (booking.status === "EXPIRED" || booking.status === "CANCELLED") {
-
-
-     // ✅ Legit late payment → refund
-    await stripeInstance.refunds.create({
-      payment_intent: session?.payment_intent as string,
-    });
+ 08:00 → Cron runs, checks shows from 08:00-16:00
+09:00 → User books ticket for 12:00 show
+10:00 → User should get reminder (2 hours before 12:00)
+        ❌ But cron won't run again until 16:00!
+16:00 → Next cron runs (too late, show already happened at 12:00)
 
 
 
-    await PaymentModel.findOneAndUpdate(
-      { paymentCustomUniqueId },
-      {
-        status: "refunded",
-        isPaid: false,
-        paymentIntentId: session?.payment_intent,
-      }
-    );
 
-    return ResponseHandler(response,200,false,null,'Booking Expired. Payment Refunded.');
-           }
-                //IF PAYMENT IS EXPIRED , THEN SEND BACK THE PAYMENT REFUND START
-                const payment = await PaymentModel.findOneAndUpdate(
-                    {
-                    paymentCustomUniqueId:paymentCustomUniqueId,
-                    userId:userId,
-                },
-                { 
-                    status: "succeeded",
-                    isPaid: true,
-                      paymentIntentId:session?.payment_intent as string, 
-                },{
-                    new:true,
-                }
-                );
-                break;
-            }
-    
-             default:
-                console.log(`Unhandled event type ${event.type}`);
-                break;    
-        }
-        return ResponseHandler(response,200,true,{received:true},'stripe webhook success');
-    } catch (error) {
-        console.error('`Webhook processing error:',error);
-        return ResponseHandler(response,200,false,null,'stripe webhook processing error');
+SOLUTION 
+
+
+The Correct Solution: Schedule Per-Booking Reminders
+You need to schedule individual reminders when the booking is confirmed, not use a batch cron job.
+
+
+
+
+  // ============================================================
+  // ✅ SCHEDULE REMINDER EMAIL - 2 HOURS BEFORE SHOW
+  // ============================================================
+  
+  try {
+    const showTime = new Date(booking.show.showDateTime);
+    const reminderTime = new Date(showTime.getTime() - 2 * 60 * 60 * 1000); // 2 hours before
+    const now = new Date();
+
+    // Only schedule if show is more than 2 hours away
+    if (reminderTime > now) {
+      console.log(`📅 Scheduling reminder for ${reminderTime.toISOString()}`);
+      
+      await inngest.send({
+        name: "app.scheduleShowReminder",
+        data: {
+          bookingId: booking._id.toString(),
+          userId: userId,
+          scheduledFor: reminderTime.toISOString(),
+        },
+      });
+      
+      console.log("✅ Reminder scheduled successfully");
+    } else {
+      console.log("⚠️ Show is less than 2 hours away, skipping reminder");
     }
-}
-
-
+  } catch (reminderError) {
+    console.error("❌ Failed to schedule reminder:", reminderError);
+    // Don't fail the webhook - booking is still confirmed
+  }

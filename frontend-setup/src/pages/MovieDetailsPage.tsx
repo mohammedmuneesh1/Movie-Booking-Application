@@ -17,8 +17,8 @@ import { useAppContext } from "../context/useAppContext";
 const  MovieDetailsPage = () => {
   const {id} = useParams();
   const navigate = useNavigate();
-  //eslint-disable-next-line
-  const { nowPlayingLoading, nowPlaying } = useAppContext();
+    
+  const {  nowPlaying } = useAppContext();
 
   //eslint-disable-next-line
   const [show,setShow] = useState<null |{movie:MovieDetailsPageMovieData,dateTime:any,isFavourite:boolean}>(null);
@@ -301,7 +301,6 @@ interface MovieTrailerModal{
 }
 const MovieTrailerModal:React.FC<MovieTrailerModal> = ({closeModal,trailerData})=>{
   
-  console.log('trailerData?.key',trailerData);
 
   return(
      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">

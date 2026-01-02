@@ -9,8 +9,7 @@ import AdminTitle from "../components/(admin)/AdminTitle";
 
 
 const  MyBookingsPage = () => {
-  //eslint-disable-next-line
-  const currency = import.meta.env.VITE_CURRENCY;
+
   //eslint-disable-next-line
   const [bookings,setBookings] = useState<any[]>([]);
 
@@ -20,7 +19,6 @@ const  MyBookingsPage = () => {
 
     try {
       const res = await axiosInstance.get('/api/bookings/user/bookings');
-      console.log('res',res?.data?.data);
       if(res?.data?.success){
         return setBookings(res?.data?.data);
       }

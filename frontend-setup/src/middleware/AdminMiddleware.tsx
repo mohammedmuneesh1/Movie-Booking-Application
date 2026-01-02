@@ -9,9 +9,14 @@ import { Navigate, Outlet } from "react-router-dom";
 const isTokenValid = (token: string) => {
   try {
     const decoded: { exp: number,ia: boolean } = jwtDecode(token);
-    if(decoded.ia &&  decoded.ia !== true){
-        return false;
-  }
+
+    if(decoded?.ia !==true){
+      return false;
+    }
+
+  //   if(decoded.ia &&  decoded.ia !== true){
+  //       return false;
+  // }
     return decoded.exp * 1000 > Date.now();
   } catch {
     return false;

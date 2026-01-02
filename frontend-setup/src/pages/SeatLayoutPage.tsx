@@ -66,7 +66,6 @@ const  SeatLayoutPage = () => {
       if(!selectedtime) return;
       // if(!selectedtime) return toast.error("Please choose movie timing");
       const res = await axiosInstance.get(`/api/bookings/seats/${selectedtime.showId}`);
-      console.log('res data ',res?.data?.data);
       if(res?.data?.success){
         setOccupiedSeats(res?.data?.data);
       }
@@ -114,10 +113,12 @@ const  SeatLayoutPage = () => {
 
 
 
+
   const bookTickets = async ()=>{
     try {
       const token = localStorage.getItem("token");
       if(!token) return navigate("/login");
+
       if(!selectedtime) return toast.error("Please choose movie timing");
       if(!selectedSeats || !selectedSeats.length) return toast.error("Please select at least one seat");
       setCheckoutLoading(true);

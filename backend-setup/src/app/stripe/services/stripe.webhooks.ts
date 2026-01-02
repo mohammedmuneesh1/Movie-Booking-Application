@@ -8,7 +8,6 @@ import connectDB from "../../../config/db.js";
 import { inngest } from "../../../config/ingest/ingestFunction.js";
 
 export const stripeWebHooks = async (request: Request, response: Response) => {
-  console.log("stripeWebHooks called");
 
   // ✅ SAFETY NET FOR WEBHOOK (required)
   if (mongoose.connection.readyState !== 1) {
@@ -57,7 +56,8 @@ export const stripeWebHooks = async (request: Request, response: Response) => {
             userId: string;
           };
 
-        if (!bookingId || !paymentCustomUniqueId || !userId)
+        if (!bookingId || !paymentCustomUniqueId || !userId){
+
           return ResponseHandler(
             response,
             200,
@@ -65,6 +65,7 @@ export const stripeWebHooks = async (request: Request, response: Response) => {
             null,
             "stripe webhook error:Booking id not found || paymentCustomUniqueId not found || userId not found."
           );
+        }
 
         const booking = await BookingModel.findById(bookingId);
 
@@ -111,10 +112,22 @@ export const stripeWebHooks = async (request: Request, response: Response) => {
             }
           );
 
+// ⚠️⚠️⚠️⚠️⚠️ TASK PENDING NOTIFICATION START //
+
+  //          // Send notification to user
+  // await sendRefundNotification({
+  //   userId,
+  //   bookingId,
+  //   message: "Oops! Your booking expired before payment completed. Don't worry - your payment has been automatically refunded.",
+  //   refundAmount: paymentIntent.amount / 100, // Convert from cents
+  //   estimatedRefundDays: "5-10 business days"
+  // });
+
+
           return ResponseHandler(
             response,
             200,
-            false,
+            true,
             null,
             "Booking Expired. Payment Refunded."
           );
@@ -135,13 +148,56 @@ export const stripeWebHooks = async (request: Request, response: Response) => {
             new: true,
           }
         );
-        console.log('payment document',payment);
 
         booking.status = "CONFIRMED";
         await booking.save();
 
-        // SEND CONFIRMATION EMAIL 
 
+
+
+
+
+  // ============================================================
+  // ✅ SCHEDULE REMINDER EMAIL - 2 HOURS BEFORE SHOW
+  // ============================================================
+
+  try {
+    const showTime = new Date(booking.show.showDateTime); //SUPPOSE SHOW TIME AT 16:00, THEN "reminderTime" WILL BE AT 14:00
+    const reminderTime = new Date(showTime.getTime() - 2 * 60 * 60 * 1000); // 2 hours before
+
+    const now = new Date();
+
+    // Only schedule if show is more than 2 hours away
+    if (reminderTime > now) {
+
+      await inngest.send({
+        name: "app.scheduleShowReminder",
+        data: {
+          bookingId: booking._id.toString(),
+          userId: userId,
+          scheduledFor: reminderTime.toISOString(),  //Converts the Date to UTC, Exactly what Inngest wants, sleepUntil() → UTC, toISOString() → UTC
+        },
+      });
+      
+      console.info("✅ Reminder scheduled successfully");
+    } else {
+    }
+  } catch (reminderError) {
+    console.error("❌ Failed to schedule reminder:", reminderError);
+    // Don't fail the webhook - booking is still confirmed
+  }
+
+
+
+
+
+
+
+
+
+//===============================================================
+        // SEND CONFIRMATION EMAIL 
+//===============================================================
           try {
             await inngest.send({
               name: "app.bookingConfirmationEmail",
@@ -157,7 +213,7 @@ export const stripeWebHooks = async (request: Request, response: Response) => {
       }
 
       default:
-        console.log(`Unhandled event type ${event.type}`);
+        console.info(`Unhandled event type ${event.type}`);
         break;
     }
     return ResponseHandler(

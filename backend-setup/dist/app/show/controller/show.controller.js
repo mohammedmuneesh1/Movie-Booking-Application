@@ -5,6 +5,7 @@ import ShowModel from "../models/show.schema.js";
 import { getBestPlayableVideo } from "../services/show.service.js";
 import { getTokenDataIfExist } from "../../../utils/getTokenDataIfExist.js";
 import { IS_FAVOURITE_EXIST_SERVICE } from "../../favourite/services/favourite.service.js";
+import { inngest } from "../../../config/ingest/ingestFunction.js";
 //===============================================================================================================================================
 /**
  * @desc    Get tmdb india based now playing movies
@@ -13,7 +14,6 @@ import { IS_FAVOURITE_EXIST_SERVICE } from "../../favourite/services/favourite.s
  * @returns  movie array
  */
 export async function GET_NOW_PLAYING_MOVIES_CONTROLLER(req, res) {
-    console.log('request hit here');
     // const tmdbData = await axios.get(
     //     `${process.env.TMBD_API}/3/movie/now_playing`,
     //     {
@@ -83,8 +83,6 @@ export async function ADD_NEW_MOVIE_SHOW_CONTROLLER(req, res) {
         const movieApiData = movieDetailsResponse?.data;
         const movieCreditsData = movieCreditsResponse.data;
         const movieTrailerData = getBestPlayableVideo(movieTrailerDetails?.data?.results);
-        console.log('movieTrailerData', movieTrailerDetails?.data);
-        console.log('filtered data', movieTrailerData);
         const movieDetails = {
             movieId: movieId,
             title: movieApiData.title,
@@ -147,6 +145,20 @@ export async function ADD_NEW_MOVIE_SHOW_CONTROLLER(req, res) {
     if (showsToCreate.length > 0) {
         await ShowModel.insertMany(showsToCreate);
     }
+    //=================== INNGEST START ============================================
+    //trigger inngest event for sending user notification new movie added 
+    try {
+        await inngest.send({
+            name: "new-show-added",
+            data: {
+                movieTitle: isMovieExist.title
+            }
+        });
+    }
+    catch (error) {
+        console.error("error while sending new show to users on inngest", error instanceof Error ? error.message : error);
+    }
+    //=================== INNGEST END ============================================
     return ResponseHandler(res, 200, true, null, 'Movie show added successfully.');
 }
 //===============================================================================================================================================

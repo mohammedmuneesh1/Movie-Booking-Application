@@ -53,6 +53,5 @@ export async function GET_ALL_BOOKINGS_BY_USER_ID_SERVICE(userId:string){
         }]
     }]).sort({createdAt:-1}); 
         
-    console.log('bookingData',bookingData);
     return bookingData;
 }

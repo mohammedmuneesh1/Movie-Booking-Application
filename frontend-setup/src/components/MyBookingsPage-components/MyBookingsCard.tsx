@@ -14,7 +14,6 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
       const currency = import.meta.env.VITE_CURRENCY;
       const imageBaseUrl = import.meta.env.VITE_TMDB_IMAGE_BASE_URL;
 
-      console.log('imge',data);
 
 
     return(

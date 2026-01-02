@@ -91,8 +91,8 @@ export async function CREATE_BOOKING_CONTROLLER(req, res) {
         if (showData.movieRef.description?.trim()) {
             productData.description = showData.movieRef.description;
         }
-        console.log('paymentExpiresOn', stripePaymentExpiresOnSeconds);
-        console.log('paymentExpiresOnDate', paymentExpiresOnDate);
+        // console.log('paymentExpiresOn',stripePaymentExpiresOnSeconds);
+        // console.log('paymentExpiresOnDate',paymentExpiresOnDate);
         const paymentCustomUniqueId = uuidv4();
         const payAmount = showData.showPrice * selectedSeats.length;
         const stripePaymentAmount = payAmount * 100; //*100 is required (convert to paise, OR CENTS IN STRIPE , PAISE FOR INR)
@@ -167,7 +167,6 @@ export async function CREATE_BOOKING_CONTROLLER(req, res) {
  */
 export async function GET_ALL_OCCUPIED_SEATS_BY_SHOWID(req, res) {
     const { showId } = req.params;
-    console.log('request reached here', showId);
     const showData = await ShowModel.findById(showId).populate([
         {
             path: 'movieRef',

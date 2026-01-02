@@ -1,5 +1,5 @@
 import { useGoogleLogin } from "@react-oauth/google";
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import axiosInstance from "../../configs/axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +39,7 @@ const googleLogin = useGoogleLogin({
   },
 
   onError: () => {
-    console.log("Google login failed");
+    console.error("Google login failed");
   },
 });
 

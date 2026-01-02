@@ -45,7 +45,9 @@ const AvailableTiming:React.FC<AvailableTimingInterface> = ({availableTimingsDat
                     // className="text-sm sm:text-base font-medium px-6"
                     >
                         <ClockIcon className="w-4 h-4 " />
-                        <p className="text-sm">{isoTimeFormatForCountry(timing.time)}</p>
+                        <p className="text-sm">{
+                          isoTimeFormatForCountry(timing.time, "en-IN", "Asia/Kolkata")}
+                        </p>
                         
                     </div>
                 ))

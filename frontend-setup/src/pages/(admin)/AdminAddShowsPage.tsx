@@ -147,11 +147,14 @@ const handleSubmit = async ()=>{
     ));
 
 
+
     const payload = {
         movieId:selectedMovie,
         showsInput:showsInput,
         showPrice:Number(showPrice)
     }
+
+    console.log('payload',payload);
 
     const res = await axiosInstance.post('/api/show/add-show',payload);
 

@@ -18,13 +18,11 @@ export async function ADD_OR_REMOVE_FAVOURITE_MOVIE_CONTROLLER(req:Authenticated
     
   // Try delete first (fast path)
 
-  console.log('movieId',movieId,'userId',userId);
 
   const deleted = await FavoriteModel.findOneAndDelete({
     user: userId,
     movieRef: isMovieExist?._id,
   });
-  console.log('deleted',deleted);
 
 
   if (deleted) {

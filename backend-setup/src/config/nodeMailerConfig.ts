@@ -30,7 +30,7 @@ mailTransporter.verify((error: unknown, success: unknown) => {
   if (error) {
     console.error("❌ Mail server error:", error);
   } else {
-    console.log("✅ Mail server is ready");
+    console.info("✅ Mail server is ready");
   }
 });
 

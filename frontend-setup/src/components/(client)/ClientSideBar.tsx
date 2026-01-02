@@ -1,16 +1,31 @@
 
-import React from 'react'
+import { jwtDecode } from 'jwt-decode';
 import { assets } from '../../assets/assets'
 import { LayoutDashboardIcon, ListCollapseIcon, PlusSquareIcon } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
 const ClientSideBar = () => {
 
-    const  user = {
-        firstName:'Admin',
-        lastName:'User',
-        imageUrl:assets.profile,
-    };
+
+
+  const  user = {
+      firstName:'',
+      lastName:'',
+      imageUrl:assets.profile,
+  };
+
+  const token = localStorage.getItem('token');
+
+  if(token &&  jwtDecode(token)){
+    //eslint-disable-next-line
+    const tokenDecoded: any| null = token ?  jwtDecode(token) : null;
+
+    if(tokenDecoded.name ){
+      user.firstName = tokenDecoded?.name ?? "";
+    }
+
+  }
+
 
     const clientNavLinks = [
         {name:"Dashboard", path:'/user/dashboard', icon:LayoutDashboardIcon},

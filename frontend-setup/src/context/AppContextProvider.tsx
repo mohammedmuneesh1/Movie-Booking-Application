@@ -20,9 +20,8 @@ const AppContextProvider = ({children}:{children:React.ReactNode}) => {
     //eslint-disable-next-line
     const [nowPlaying,setNowPlaying] = useState<null | Array<any>>(null);
 
-    
     //eslint-disable-next-line
-    const [userInfo,setUserInfo] = useState<object | null>(()=>{
+    const [userInfo] = useState<object | null>(()=>{
         const userInfo = localStorage.getItem('token');
         if(userInfo) {
             return jwtDecode(userInfo);
@@ -71,7 +70,6 @@ const AppContextProvider = ({children}:{children:React.ReactNode}) => {
 const fetchShows  = async ()=>{
     try {
         const res = await axiosInstance.get('/api/show/all')
-        console.log('res from fetching shows ',res?.data);
         if(res?.data?.success === true) {
             setShows(res?.data?.data);
         } 

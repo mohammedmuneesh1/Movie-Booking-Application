@@ -66,7 +66,8 @@ const ActiveMovieCard:React.FC<ActiveMovieCard> = ({data,customSyle,imgStyle,tmd
    
       </div>
            <p className='mt-2 text-sm text-gray-500'>
-            {isoDateTimeFormatForCountry(data?.showDateTime)}
+            {isoDateTimeFormatForCountry(data?.showDateTime ?? "", "en-IN", "Asia/Kolkata")}
+            
         </p>
     </div>
   )

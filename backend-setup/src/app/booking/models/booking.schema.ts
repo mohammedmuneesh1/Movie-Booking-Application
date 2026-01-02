@@ -5,6 +5,12 @@ interface IBooking extends Document {
   show: string;
   bookedSeats: string[];
   paymentId: Types.ObjectId;
+  status: string;
+  expiresAt: Date;
+  ispersonalEmailReminderSent: boolean;
+  personalEmailReminderSentAt?: Date;
+  personalEmailRminderScheduledFor?: Date;
+
 }
 
 const bookingSchema = new mongoose.Schema(
@@ -26,6 +32,16 @@ const bookingSchema = new mongoose.Schema(
     expiresAt: {
       type: Date,
       required: true,
+    },
+    ispersonalEmailReminderSent:{
+      type: Boolean,
+      default: false
+    },
+    personalEmailReminderSentAt:{
+      type: Date,
+    },
+    personalEmailRminderScheduledFor:{
+      type: Date
     },
 
     show: {

@@ -13,9 +13,11 @@ export default isoTimeFormatForCountry;
 
 export const isoDateTimeFormatForCountry = (
   iso: string,
-  country: string = "en-US",
+  country: string = "",
   timeZone: string = "UTC"
 ) => {
+  if(!iso) return '';
+  if(typeof iso === 'string' && iso.length === 0) return '';
   const date = new Date(iso);
 
   return date.toLocaleString(country, {

@@ -39,7 +39,7 @@ axiosInstance.interceptors.response.use(
       // token expired / invalid
       localStorage.removeItem("token");
       // optional hard redirect
-      // window.location.href = "/login";
+      window.location.href = "/login";
     }
 
     return Promise.reject(error);

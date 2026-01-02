@@ -14,7 +14,7 @@ mailTransporter.verify((error, success) => {
         console.error("❌ Mail server error:", error);
     }
     else {
-        console.log("✅ Mail server is ready");
+        console.info("✅ Mail server is ready");
     }
 });
 export const sendEmail = async ({ to, subject, body }) => {

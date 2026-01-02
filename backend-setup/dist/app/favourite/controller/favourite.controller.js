@@ -9,12 +9,10 @@ export async function ADD_OR_REMOVE_FAVOURITE_MOVIE_CONTROLLER(req, res) {
         return ResponseHandler(res, 200, false, null, "Movie dont exist. please try after sometimes.");
     }
     // Try delete first (fast path)
-    console.log('movieId', movieId, 'userId', userId);
     const deleted = await FavoriteModel.findOneAndDelete({
         user: userId,
         movieRef: isMovieExist?._id,
     });
-    console.log('deleted', deleted);
     if (deleted) {
         return ResponseHandler(res, 200, true, null, "Movie removed from favourite.");
     }

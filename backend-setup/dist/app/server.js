@@ -11,7 +11,7 @@ import AdminRouter from './admin/routes/admin.route.js';
 import FavourtieRouter from './favourite/route/favourite.route.js';
 import { stripeWebHooks } from './stripe/services/stripe.webhooks.js';
 import { serve } from 'inngest/express';
-import { inngest, releaseSeatsAndDeleteBookings, sendBookingConfirmationEmail } from '../config/ingest/ingestFunction.js';
+import { inngest, releaseSeatsAndDeleteBookings, sendBookingConfirmationEmail, sendNewShowNotifications, sendPersonalShowReminder, sendShowReminders } from '../config/ingest/ingestFunction.js';
 import { ensureDBConnection } from '../config/ensureDBConnection.js';
 dotenv.config();
 const app = express();
@@ -49,13 +49,19 @@ app.use((req, res, next) => {
         timeZone: "Asia/Kolkata",
         hour12: false,
     });
-    console.log(`[${time}] [${req.method}] ${req.originalUrl}`);
+    console.info(`[${time}] [${req.method}] ${req.originalUrl}`);
     next();
 });
 // ✅ ADD INNGEST ENDPOINT HERE (BEFORE YOUR OTHER ROUTES)
 app.use('/api/inngest', serve({
     client: inngest,
-    functions: [releaseSeatsAndDeleteBookings, sendBookingConfirmationEmail],
+    functions: [
+        releaseSeatsAndDeleteBookings,
+        sendBookingConfirmationEmail,
+        sendShowReminders,
+        sendNewShowNotifications,
+        sendPersonalShowReminder,
+    ],
     // signingKey: process.env.INNGEST_SIGNING_KEY as string,
 }));
 app.use('/api/users', UserRouter);
@@ -64,7 +70,6 @@ app.use('/api/bookings', BookingRouter);
 app.use('/api/admin', AdminRouter);
 app.use('/api/favourites', FavourtieRouter);
 app.get("/", (req, res) => {
-    console.log('Api Working');
     return res.status(200).json({
         success: true,
         message: "API is working",
@@ -87,7 +92,7 @@ if (process.env.NODE_ENV !== 'production') {
     connectDB()
         .then(() => {
         app.listen(PORT, () => {
-            console.log(`User service listening on port ${PORT} in ${process.env.NODE_ENV} mode`);
+            console.info(`User service listening on port ${PORT} in ${process.env.NODE_ENV} mode`);
         });
     })
         .catch((error) => {

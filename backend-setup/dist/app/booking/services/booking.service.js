@@ -43,7 +43,6 @@ export async function GET_ALL_BOOKINGS_BY_USER_ID_SERVICE(userId) {
                     model: 'Movie',
                 }]
         }]).sort({ createdAt: -1 });
-    console.log('bookingData', bookingData);
     return bookingData;
 }
 //# sourceMappingURL=booking.service.js.map
