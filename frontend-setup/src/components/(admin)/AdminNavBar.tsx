@@ -12,6 +12,7 @@ const AdminNavBar = () => {
         <img 
         src={assets?.logo}
          alt="app logo" 
+         loading="lazy"
          className='w-36 h-auto'
          />
         </Link>

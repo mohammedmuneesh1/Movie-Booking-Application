@@ -33,6 +33,7 @@ const MyBookingsCard:React.FC<MyBookingsCardInterface> = ({data})=>{
           <div className="flex flex-col md:flex-row">
           <img 
           src={`${imageBaseUrl}${data?.show?.movieRef?.poster_path} `}
+          loading="lazy"
         alt="movie poster"
         // className="h-40 w-40 object-cover rounded-lg" 
         className="md:max-w-45 w-full h-auto aspect-video object-cover object-bottom rounded "

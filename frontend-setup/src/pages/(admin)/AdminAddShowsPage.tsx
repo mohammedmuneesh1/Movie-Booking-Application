@@ -219,6 +219,7 @@ const handleSubmit = async ()=>{
                             <img
                             src={`${tmdbImageUrl}/${movie.poster_path}`}
                             alt={movie.title}
+                            loading="lazy"
                             className="w-full max-w-full brightness-90 "
                             />
 

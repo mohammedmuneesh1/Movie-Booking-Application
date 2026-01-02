@@ -49,6 +49,7 @@ const TrailerSection = ()=>{
                             <img 
                             src={trailer.image}
                             alt="trailer"
+                            loading="lazy"
                             className="rounded-lg w-full h-full
                              object-cover brightness-75"
                             />

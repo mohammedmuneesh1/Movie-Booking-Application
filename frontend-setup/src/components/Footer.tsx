@@ -7,7 +7,9 @@ const  Footer = () => {
             <div className="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-500 pb-10">
                 <div className="md:max-w-96">
 
-                    <img alt="" className="h-11" src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/dummyLogo/prebuiltuiLogoSquareShape.svg" />
+                    <img alt="img" className="h-11" src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/dummyLogo/prebuiltuiLogoSquareShape.svg" 
+                    loading="lazy"
+                    />
 
                     <p className="mt-6 text-sm">
 
@@ -22,6 +24,7 @@ const  Footer = () => {
                         <img 
                         src={assets?.appStore}
                         alt="app store"
+                        loading="lazy"
                         className="h-10 w-auto border border-white rounded" 
 
                         />

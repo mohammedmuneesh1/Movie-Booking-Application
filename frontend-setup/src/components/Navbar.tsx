@@ -52,6 +52,7 @@ const  Navbar = () => {
     <img
     src={assets.logo}
     alt='app-logo'
+    loading="lazy"
     className='max-w-36 w-full h-auto'
     />
    </Link>

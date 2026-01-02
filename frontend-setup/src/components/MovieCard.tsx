@@ -228,6 +228,7 @@ const MovieCard = ({movie}:{movie:any})=>{
              src={tmdbImageUrl ? `${tmdbImageUrl}${movie?.movieRef?.backdrop_path}` : movie?.movieRef?.backdrop_path}
              alt="movie card image"
            onClick={movieByIdNavigate}
+           loading="lazy"
              className="rounded-lg h-full w-full 
               object-cover  cursor-pointer"
             //  className="rounded-lg h-52 w-full

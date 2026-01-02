@@ -30,6 +30,7 @@ const MovieCast:React.FC<MovieCastInterface> = ({castData})=>{
                         >
                             <img 
                             src={`${movieImgURL}${cast?.profile_path}`}
+                            loading="lazy"
                             alt=""
                             className="rounded-full h-20 w-20  aspect-square object-cover ppionter-events-none"
                             />

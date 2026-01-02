@@ -19,7 +19,11 @@ const SelectSeatLayout:React.FC<SelectSeatLayoutInterface> = ({groupRows,handleS
             <BlurCircle top="0" right="0px" />
         
         <h1 className=" text-xl sm:text-2xl font-semibold mb-4">Select Your Seat</h1>
-        <img src={assets.screenImage} alt="screen" />
+        <img 
+        src={assets.screenImage} 
+        alt="screen" 
+        loading="lazy"
+        />
         <p className="text-gray-400 text-sm mb-6">SCREEN SIDE</p>
 
 

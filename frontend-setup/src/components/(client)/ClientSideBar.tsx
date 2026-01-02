@@ -48,6 +48,7 @@ const ClientSideBar = () => {
         <img className='h-9 md:h-14 w-9 md:w-14 rounded-full mx-auto' 
         src={user.imageUrl}
          alt="user image"
+         loading="lazy"
           />
         {/*USER PROFILE IMAGE END */}
 

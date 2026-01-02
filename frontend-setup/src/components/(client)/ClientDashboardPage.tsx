@@ -45,6 +45,7 @@ const ClientDashboardPage = () => {
             <img
               src="https://image.tmdb.org/t/p/w500/5c5FRas3ySsaQ97uVdeFKIl83TT.jpg"
               alt="movie poster"
+              loading="lazy"
               className="w-32 rounded-xl object-cover"
             />
 

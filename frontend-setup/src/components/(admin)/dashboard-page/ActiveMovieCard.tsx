@@ -38,6 +38,7 @@ const ActiveMovieCard:React.FC<ActiveMovieCard> = ({data,customSyle,imgStyle,tmd
         <img
           src={tmdbImageUrl ? `${tmdbImageUrl}${data?.movieRef?.poster_path}` : data?.movieRef?.poster_path}
           alt={data?.movieRef?.title}
+          loading="lazy"
           className="w-full h-full object-cover "
         />
       </div>

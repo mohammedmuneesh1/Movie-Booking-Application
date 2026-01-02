@@ -138,12 +138,14 @@ const [isTrailerOpen, setIsTrailerOpen] = useState<boolean>(false);
           <img
            src={`${movieImgURL}${show?.movie?.poster_path}`}
            alt={show?.movie?.title ?? "movie title"}
+           loading="lazy"
+           
            className="max-md:mx-auto rounded-xl h-104  xl:h-120  max-w-70 xl:max-w-102 object-cover"
            />
 
            <div className="relative flex flex-col gap-3 w-full">
             <BlurCircle top="-100px" left="-150px" />
-            <p className="text-primary">ENGLISH</p>
+            {/* <p className="text-primary">ENGLISH</p> */}
             <h1
              className="text-4xl font-semibold max-w-96 text-balance text-white"
              >{show?.movie?.title ?? ""}</h1>
@@ -175,6 +177,9 @@ const [isTrailerOpen, setIsTrailerOpen] = useState<boolean>(false);
 
 {/* WATCH TRAILER + BUY TICKET START */}
 <div className="flex items-center flex-wrap gap-4 mt-4 text-white "> 
+
+  {
+    show?.movie?.trailer && (
   <button
   type="button"
     onClick={() => setIsTrailerOpen(true)}
@@ -186,6 +191,8 @@ const [isTrailerOpen, setIsTrailerOpen] = useState<boolean>(false);
 
     Watch Trailer
   </button>
+    )
+  }
   <a href="#dateSelect"
   className="flex items-center gap-2 px-7 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer active:scale-95 "
   > Buy Tickets </a>
@@ -247,12 +254,14 @@ castData={show?.movie?.casts ?? []}
 {/*TRAILER START */}
 
 
-{isTrailerOpen && (
-  <MovieTrailerModal
-  closeModal={() => setIsTrailerOpen(false)}
-  trailerData={show?.movie?.trailer ?? {}}
-  />
-)}
+{show?.movie?.trailer && (
+    isTrailerOpen && (
+      <MovieTrailerModal
+      closeModal={() => setIsTrailerOpen(false)}
+      trailerData={show?.movie?.trailer ?? {}}
+      />
+  ))}
+
 
 
 {/*TRAILER END */}
@@ -323,13 +332,13 @@ const MovieTrailerModal:React.FC<MovieTrailerModal> = ({closeModal,trailerData})
       </button>
 
       {/* trailer */}
-
+{/* 
        <iframe
             src="https://www.youtube.com/embed/az8M5Mai0X4?si=jItGjW2wvUOcJaR3"
             className="w-full h-full"
             allow="autoplay; encrypted-media"
             allowFullScreen
-          />
+          /> */}
 
 {
   trailerData?.key && (

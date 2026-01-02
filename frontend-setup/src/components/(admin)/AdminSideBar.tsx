@@ -31,6 +31,7 @@ const AdminSideBar = () => {
         {/*USER PROFILE IMAGE START */}
         <img className='h-9 md:h-14 w-9 md:w-14 rounded-full mx-auto' 
         src={user.imageUrl}
+        loading="lazy"
          alt="user image"
           />
         {/*USER PROFILE IMAGE END */}

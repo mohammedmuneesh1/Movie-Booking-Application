@@ -46,6 +46,7 @@ const UserProfilePage = () => {
           <img
             src={user.avatar}
             alt="user avatar"
+            loading="lazy"
             className="w-28 h-28 rounded-full object-cover border-2 border-primary"
           />
         </div>

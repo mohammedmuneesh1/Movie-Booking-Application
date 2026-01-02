@@ -10,6 +10,7 @@ const ClientNavBar = () => {
         <Link to='/'>
         <img 
         src={assets?.logo}
+        loading="lazy"
          alt="app logo" 
          className='w-36 h-auto'
          />

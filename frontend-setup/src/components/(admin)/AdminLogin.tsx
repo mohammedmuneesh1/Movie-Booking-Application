@@ -57,8 +57,8 @@ const tokenValidation = () => {
       localStorage.removeItem("token");
       return;
     }
-
-        navigate(decoded.ia ? "/admin" : "/user/dashboard", {
+    console.log('decoded', )
+    navigate(decoded.ia ?  "/admin" : "/user/dashboard", {
       replace: true,
     });
 
@@ -76,7 +76,7 @@ const tokenValidation = () => {
 
 useEffect(()=>{
     tokenValidation();
-},[navigate]);
+},[]);
 
 
   return (
