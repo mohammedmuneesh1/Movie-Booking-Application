@@ -205,6 +205,7 @@ const  SeatLayoutPage = () => {
         <button 
         // onClick={()=>navigate('/my-bookings')}
         onClick={()=>bookTickets()}
+        disabled={checkoutLoading}
         type="button"
         className="flex items-center mt-20 gap-1 px-10 py-3 text-sm bg-primary hover:bg-primary-dull
          transition rounded-full font-medium cursor-pointer active:scale-95 text-white capitalize"

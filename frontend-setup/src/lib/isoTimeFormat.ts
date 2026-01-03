@@ -13,8 +13,8 @@ export default isoTimeFormatForCountry;
 
 export const isoDateTimeFormatForCountry = (
   iso: string,
-  country: string = "",
-  timeZone: string = "UTC"
+  country: string = "en-IN", // ✅ India locale
+  timeZone: string = "Asia/Kolkata" 
 ) => {
   if(!iso) return '';
   if(typeof iso === 'string' && iso.length === 0) return '';
