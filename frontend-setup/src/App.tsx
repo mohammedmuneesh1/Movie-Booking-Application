@@ -65,14 +65,12 @@ function App() {
 
 
 <Route path="/user/dashboard" element={<UserMiddleware />}>
-
 <Route element={<UserSideLayout />}>
     <Route index element={<ClientDashboardPage />} />
    <Route path="bookings" element={<MyBookingsPage />} />
    <Route path="profile" element={<UserProfilePage />} />
    <Route path="saved-movies" element={<UserSavedMoviesPage />} />
 </Route>
-
 </Route>
 
 
